@@ -1,0 +1,11 @@
+{
+  "name": "aippt-frontend",
+  "version": "1.0.0",
+  "description": "AI PPT Generator Frontend",
+  "scripts": {
+    "start": "http-server . -p 3000 --cors -o"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

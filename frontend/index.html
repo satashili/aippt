@@ -6,6 +6,12 @@
     <title>Smart PPT Generator - AI-Driven Presentation Creation Tool</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        window.config = {
+            apiBaseUrl: 'http://localhost:8080',
+            googleAuthUrl: 'http://localhost:8080/oauth2/authorization/google'
+        };
+    </script>
 </head>
 <body>
     <div class="particles-container" id="particles-js"></div>
@@ -23,8 +29,8 @@
                 <li><a href="#contact">Contact Us</a></li>
             </ul>
             <div class="auth-buttons">
-                <button class="login-btn">Login</button>
-                <button class="signup-btn">Sign Up</button>
+                <button onclick="window.location.href=window.config.googleAuthUrl" class="login-btn">Log in</button>
+                <button class="signup-btn">Sign up</button>
             </div>
         </nav>
     </header>
@@ -169,6 +175,93 @@
                     </div>
                 </div>
                 <button class="view-more-btn">View More Templates</button>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing-section">
+            <div class="container">
+                <h2>Choose Your Membership Plan</h2>
+                <p class="section-subtitle">Unlock all premium features and templates to enhance your presentation experience</p>
+                
+                <div class="pricing-cards">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Monthly Plan</h3>
+                            <div class="price">
+                                <span class="currency">$</span>
+                                <span class="amount">10</span>
+                                <span class="period">/month</span>
+                            </div>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="fas fa-check"></i> Unlimited AI Generation</li>
+                                <li><i class="fas fa-check"></i> All Premium Templates</li>
+                                <li><i class="fas fa-check"></i> Advanced Charts & Visualizations</li>
+                                <li><i class="fas fa-check"></i> Priority Customer Support</li>
+                                <li><i class="fas fa-check"></i> Watermark-free Export</li>
+                            </ul>
+                        </div>
+                        <button class="pricing-btn">Subscribe Now</button>
+                        <p class="pricing-note">Cancel anytime</p>
+                    </div>
+                    
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3>Annual Plan</h3>
+                            <div class="price">
+                                <span class="currency">$</span>
+                                <span class="amount">60</span>
+                                <span class="period">/year</span>
+                            </div>
+                            <div class="savings">Save $60 (50%)</div>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="fas fa-check"></i> Unlimited AI Generation</li>
+                                <li><i class="fas fa-check"></i> All Premium Templates</li>
+                                <li><i class="fas fa-check"></i> Advanced Charts & Visualizations</li>
+                                <li><i class="fas fa-check"></i> Priority Customer Support</li>
+                                <li><i class="fas fa-check"></i> Watermark-free Export</li>
+                                <li><i class="fas fa-check"></i> Team Collaboration Features</li>
+                            </ul>
+                        </div>
+                        <button class="pricing-btn">Subscribe Now</button>
+                        <p class="pricing-note">14-day money-back guarantee</p>
+                    </div>
+                </div>
+                
+                <div class="pricing-faq">
+                    <h3>Frequently Asked Questions</h3>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>Can I cancel my subscription at any time?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, you can cancel your subscription at any time. Monthly plans will stop renewing at the end of the current billing cycle, and annual plans can contact customer support for a prorated refund.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>What features are included in the membership plans?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Membership plans include unlimited AI generation, all premium templates, advanced charts and data visualizations, priority customer support, and watermark-free exports. Annual plans also include team collaboration features.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h4>Can I get a refund if I'm not satisfied?</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Annual plans come with a 14-day money-back guarantee. If you're not satisfied with the service, you can contact our customer support team within 14 days of purchase to request a full refund.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>

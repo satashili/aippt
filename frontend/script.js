@@ -1,4 +1,3 @@
-// 粒子背景配置
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof particlesJS !== 'undefined') {
         particlesJS('particles-js', {
@@ -235,7 +234,98 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = '';
         });
     });
+
+    // FAQ interactions
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+            // Close other open FAQs
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Toggle current FAQ state
+            item.classList.toggle('active');
+        });
+    });
+    
+    // Pricing card hover effects
+    const pricingCards = document.querySelectorAll('.pricing-card');
+    pricingCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('popular')) {
+                this.style.transform = 'translateY(-10px)';
+            } else {
+                this.style.transform = 'scale(1.05) translateY(-10px)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('popular')) {
+                this.style.transform = '';
+            } else {
+                this.style.transform = 'scale(1.05)';
+            }
+        });
+    });
+    
+    // Subscribe button click events
+    const pricingBtns = document.querySelectorAll('.pricing-btn');
+    pricingBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Logic to open payment modal would go here
+            alert('In a real application, this would open the payment page.');
+        });
+    });
+
+    // 立即检查登录状态
+    fetch(`${window.config.apiBaseUrl}/user`, {
+        credentials: 'include'
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('未登录');
+    })
+    .then(user => {
+        // 用户已登录，显示用户信息
+        document.querySelector('.auth-buttons').innerHTML = `
+            <div class="user-container">
+                <img class="user-avatar" src="${user.picture}" alt="User Avatar">
+                <div class="user-details">
+                    <span class="user-name">${user.name}</span>
+                    <span class="user-email">${user.email}</span>
+                </div>
+                <button onclick="logout()" class="login-btn">Sign out</button>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.log('用户未登录或发生错误:', error);
+    });
 });
+
+// 退出登录函数
+function logout() {
+    console.log('退出函数被调用');
+    
+    fetch(`${window.config.apiBaseUrl}/logout`, {
+        method: 'POST',
+        credentials: 'include'
+    })
+    .then(response => {
+        console.log('登出响应状态:', response.status);
+        window.location.href = 'http://localhost:3000';
+    })
+    .catch(error => {
+        console.error('登出请求失败:', error);
+        window.location.href = 'http://localhost:3000';
+    });
+}
 
 // 添加3D倾斜效果
 document.addEventListener('mousemove', function(e) {

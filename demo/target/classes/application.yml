@@ -1,0 +1,54 @@
+server:
+  port: 8080  # 后端服务器端口
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/aippt?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+  security:
+    oauth2:
+      client:
+        registration: # # 这里的配置会生成 /oauth2/authorization/google
+          google:
+            client-id: 365616471510-9142grcf571vpiir3lflefp0u4nfrj5q.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            
+            scope:
+              - email  # 请求访问用户的邮箱
+              - profile  # 请求访问用户的基本信息
+              - openid
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub  # 用户唯一标识属性
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.aippt: DEBUG  # 设置应用包的日志级别为DEBUG
+    com.aippt.service: DEBUG  # 特别设置service包的日志级别
+    org.springframework.security: INFO  # 临时提高Spring Security的日志级别以便调试
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web: DEBUG  # 改为DEBUG以查看更多Web相关日志
+    org.springframework.context.annotation: TRACE  # 添加Spring的组件扫描日志
+    org.springframework.beans: DEBUG  # 添加Spring Bean的创建日志
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.aippt.entity
