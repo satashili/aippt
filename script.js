@@ -235,6 +235,52 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = '';
         });
     });
+
+    // FAQ interactions
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+            // Close other open FAQs
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Toggle current FAQ state
+            item.classList.toggle('active');
+        });
+    });
+    
+    // Pricing card hover effects
+    const pricingCards = document.querySelectorAll('.pricing-card');
+    pricingCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('popular')) {
+                this.style.transform = 'translateY(-10px)';
+            } else {
+                this.style.transform = 'scale(1.05) translateY(-10px)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('popular')) {
+                this.style.transform = '';
+            } else {
+                this.style.transform = 'scale(1.05)';
+            }
+        });
+    });
+    
+    // Subscribe button click events
+    const pricingBtns = document.querySelectorAll('.pricing-btn');
+    pricingBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Logic to open payment modal would go here
+            alert('In a real application, this would open the payment page.');
+        });
+    });
 });
 
 // 添加3D倾斜效果
