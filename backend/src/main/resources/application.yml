@@ -12,8 +12,8 @@ spring:
       client:
         registration: # 这里的配置会生成 /oauth2/authorization/google
           google:
-            client-id: 365616471510-9142grcf571vpiir3lflefp0u4nfrj5q.apps.googleusercontent.com
-            client-secret: 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
+            client-id:
+            client-secret:
             redirect-uri: http://localhost:8080/login/oauth2/code/google
             
             scope:
