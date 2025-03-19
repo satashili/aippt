@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart PPT Generator - AI-Driven Presentation Creation Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="particles-container" id="particles-js"></div>
+    
+    <header>
+        <nav>
+            <div class="logo">
+                <span>AI</span>Slides
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#templates">Templates</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="login-btn">Login</button>
+                <button class="signup-btn">Sign Up</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <h1 class="glitch-text" data-text="AI-Driven PPT Generation">AI-Driven PPT Generation</h1>
+                <p>Just input your ideas, and our AI will create professional presentations for you</p>
+                <div class="cta-container">
+                    <button class="cta-button">Get Started <i class="fas fa-arrow-right"></i></button>
+                    <button class="secondary-button">Watch Demo <i class="fas fa-play"></i></button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="floating-elements">
+                    <div class="element element-1"><i class="fas fa-chart-line"></i></div>
+                    <div class="element element-2"><i class="fas fa-image"></i></div>
+                    <div class="element element-3"><i class="fas fa-font"></i></div>
+                    <div class="element element-4"><i class="fas fa-palette"></i></div>
+                </div>
+                <img src="images/ai-presentation.png" alt="AI-generated presentation example">
+            </div>
+        </section>
+
+        <section id="generator" class="generator-section">
+            <div class="container">
+                <h2>Start Creating Your Presentation</h2>
+                <div class="generator-box">
+                    <div class="input-container">
+                        <textarea placeholder="Describe your presentation content, for example: 'Create a 10-page presentation about AI applications in healthcare, including data charts and case studies'"></textarea>
+                        <div class="options">
+                            <div class="option">
+                                <label>Style</label>
+                                <select>
+                                    <option>Professional Business</option>
+                                    <option>Creative Design</option>
+                                    <option>Academic Research</option>
+                                    <option>Tech-Focused</option>
+                                    <option>Minimalist Modern</option>
+                                </select>
+                            </div>
+                            <div class="option">
+                                <label>Number of Slides</label>
+                                <select>
+                                    <option>5-10 slides</option>
+                                    <option>10-15 slides</option>
+                                    <option>15-20 slides</option>
+                                    <option>20+ slides</option>
+                                </select>
+                            </div>
+                            <div class="option">
+                                <label>Color Theme</label>
+                                <div class="color-options">
+                                    <span class="color-option" style="background-color: #3498db;"></span>
+                                    <span class="color-option" style="background-color: #2ecc71;"></span>
+                                    <span class="color-option" style="background-color: #e74c3c;"></span>
+                                    <span class="color-option" style="background-color: #9b59b6;"></span>
+                                    <span class="color-option" style="background-color: #f1c40f;"></span>
+                                    <span class="color-option custom-color">+</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="generate-btn">
+                            <span class="default-text">Generate Presentation</span>
+                            <span class="loading-text"><i class="fas fa-spinner fa-spin"></i> AI is creating...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features-section">
+            <div class="container">
+                <h2>Powerful Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3>AI Content Generation</h3>
+                        <p>Automatically generate professional presentation content, including text, headings, and structure</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <h3>Smart Image Selection</h3>
+                        <p>AI automatically selects high-quality images and icons relevant to your content</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3>Data Visualization</h3>
+                        <p>Automatically create professional charts and data visualizations</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h3>Intelligent Design</h3>
+                        <p>Automatically apply the best design and typography based on your content</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="templates" class="templates-section">
+            <div class="container">
+                <h2>Featured Templates</h2>
+                <div class="templates-grid">
+                    <div class="template-card">
+                        <div class="template-preview">
+                            <img src="images/template1.jpg" alt="Business template">
+                            <div class="template-overlay">
+                                <button class="use-template-btn">Use This Template</button>
+                            </div>
+                        </div>
+                        <h3>Business Proposal</h3>
+                        <p>Professional business proposal template, perfect for project presentations and investment pitches</p>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-preview">
+                            <img src="images/template2.jpg" alt="Tech template">
+                            <div class="template-overlay">
+                                <button class="use-template-btn">Use This Template</button>
+                            </div>
+                        </div>
+                        <h3>Tech Showcase</h3>
+                        <p>Modern tech-style template, ideal for product launches and technical demonstrations</p>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-preview">
+                            <img src="images/template3.jpg" alt="Education template">
+                            <div class="template-overlay">
+                                <button class="use-template-btn">Use This Template</button>
+                            </div>
+                        </div>
+                        <h3>Education Course</h3>
+                        <p>Clear and readable education template, suitable for courses and training materials</p>
+                    </div>
+                </div>
+                <button class="view-more-btn">View More Templates</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span>AI</span>Slides
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Templates</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 AISlides. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
