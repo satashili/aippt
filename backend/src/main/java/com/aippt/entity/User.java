@@ -43,9 +43,15 @@ public class User {
     @TableField("last_login")
     private LocalDateTime lastLogin;
     
+    @TableField("auth_provider")
+    private String authProvider;
+    
+    @TableField("external_id")
+    private String externalId;
+    
     @Version
-    private Integer version;
+    private Integer version = 0;
     
     @TableLogic
-    private Integer deleted;
+    private Integer deleted = 0;
 } 
