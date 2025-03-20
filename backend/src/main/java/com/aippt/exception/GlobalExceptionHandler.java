@@ -31,6 +31,20 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * 处理密码无效异常
+     */
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidPasswordException(InvalidPasswordException ex) {
+        log.warn("密码验证失败: {}", ex.getMessage());
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "invalid_password");
+        response.put("message", ex.getMessage());
+        
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+    
+    /**
      * 处理用户不存在异常
      */
     @ExceptionHandler(UserNotFoundException.class)
