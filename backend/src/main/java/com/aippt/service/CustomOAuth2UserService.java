@@ -16,10 +16,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oauth2User = super.loadUser(userRequest);
-        
-        // 处理Google登录，保存或更新用户信息
-        userService.processGoogleLogin(oauth2User);
-        
+
         return oauth2User;
     }
 } 

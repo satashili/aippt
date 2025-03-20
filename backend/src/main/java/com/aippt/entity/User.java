@@ -48,10 +48,7 @@ public class User {
     
     @TableField("external_id")
     private String externalId;
-    
-    @Version
-    private Integer version = 0;
-    
+
     @TableLogic
     private Integer deleted = 0;
 } 

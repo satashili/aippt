@@ -26,12 +26,6 @@ public class RegisterController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest, 
                                      BindingResult bindingResult) {
-        // 打印接收到的请求数据
-        logger.info("==================== 注册请求数据 ====================");
-        logger.info("邮箱: {}", registerRequest.getEmail());
-        logger.info("用户名: {}", registerRequest.getName());
-        logger.info("密码长度: {}", registerRequest.getPassword() != null ? registerRequest.getPassword().length() : 0);
-        logger.info("======================================================");
 
         Map<String, Object> response = new HashMap<>();
 
@@ -57,13 +51,6 @@ public class RegisterController {
                 registerRequest.getName(),
                 registerRequest.getPassword()
             );
-
-            logger.info("==================== 注册成功 ====================");
-            logger.info("用户ID: {}", user.getId());
-            logger.info("邮箱: {}", user.getEmail());
-            logger.info("用户名: {}", user.getName());
-            logger.info("认证类型: {}", user.getAuthProvider());
-            logger.info("======================================================");
 
             response.put("success", true);
             response.put("message", "Registration successful");

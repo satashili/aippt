@@ -119,7 +119,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .lastLogin(now)
                 .authProvider("LOCAL")
                 .externalId(null)
-                .version(0)
                 .deleted(0)
                 .build();
         
@@ -145,52 +144,95 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     private User upgradeUserToBoth(User user, String password, String name, String googleId, OAuth2User oAuth2User) {
         LocalDateTime now = LocalDateTime.now();
-        User updatedUser;
         
         // 根据用户类型处理不同的升级场景
         if ("LOCAL".equals(user.getAuthProvider())) {
             // LOCAL → BOTH：本地用户添加Google认证
             log.info("本地用户升级为双重认证: {}", user.getEmail());
             
-            // 使用通用的构建器更新用户信息
-            updatedUser = buildUserWithUpdatedFields(user, builder -> {
-                builder.authProvider("BOTH")
-                       .externalId(googleId)
-                       .lastLogin(now)
-                       .name(oAuth2User.getAttribute("name"))
-                       .picture(oAuth2User.getAttribute("picture"))
-                       .givenName(oAuth2User.getAttribute("given_name"))
-                       .familyName(oAuth2User.getAttribute("family_name"))
-                       .emailVerified(true);
-            });
+            // 创建一个更新条件
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(User::getId, user.getId());
+            
+            // 首先获取最新的用户数据
+            User latestUser = this.getOne(queryWrapper);
+            if (latestUser == null) {
+                throw new UserNotFoundException("用户不存在: " + user.getId());
+            }
+            
+            // 创建更新后的用户对象
+            User updatedUser = new User();
+            updatedUser.setId(latestUser.getId());
+            updatedUser.setEmail(latestUser.getEmail());
+            updatedUser.setPassword(latestUser.getPassword());
+            updatedUser.setName(oAuth2User.getAttribute("name"));
+            updatedUser.setPicture(oAuth2User.getAttribute("picture"));
+            updatedUser.setGivenName(oAuth2User.getAttribute("given_name"));
+            updatedUser.setFamilyName(oAuth2User.getAttribute("family_name"));
+            updatedUser.setEmailVerified(true);
+            updatedUser.setIsMember(latestUser.getIsMember());
+            updatedUser.setMemberExpireTime(latestUser.getMemberExpireTime());
+            updatedUser.setCreatedAt(latestUser.getCreatedAt());
+            updatedUser.setLastLogin(now);
+            updatedUser.setAuthProvider("BOTH");
+            updatedUser.setExternalId(googleId);
+            // 移除 version 字段的设置
+            updatedUser.setDeleted(latestUser.getDeleted());
+            
+            // 使用 Mapper 直接更新，绕过乐观锁
+            getBaseMapper().updateById(updatedUser);
+            
+            return updatedUser;
             
         } else if ("GOOGLE".equals(user.getAuthProvider())) {
             // GOOGLE → BOTH：Google用户添加本地密码
             log.info("Google用户设置密码，升级为双重认证: {}", user.getEmail());
             
+            // 创建一个更新条件
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(User::getId, user.getId());
+            
+            // 首先获取最新的用户数据
+            User latestUser = this.getOne(queryWrapper);
+            if (latestUser == null) {
+                throw new UserNotFoundException("用户不存在: " + user.getId());
+            }
+            
             // 确定用户名
-            final String userName = user.getName() != null && !user.getName().isEmpty() ? 
-                user.getName() : (name != null && !name.isEmpty() ? name : user.getEmail());
+            final String userName = latestUser.getName() != null && !latestUser.getName().isEmpty() ? 
+                latestUser.getName() : (name != null && !name.isEmpty() ? name : latestUser.getEmail());
             
             // 加密密码
             String encodedPassword = PasswordUtils.encodePassword(password);
             
-            // 构建更新后的用户
-            updatedUser = buildUserWithUpdatedFields(user, builder -> {
-                builder.name(userName)
-                       .password(encodedPassword)
-                       .lastLogin(now)
-                       .authProvider("BOTH");
-            });
+            // 创建更新后的用户对象
+            User updatedUser = new User();
+            updatedUser.setId(latestUser.getId());
+            updatedUser.setEmail(latestUser.getEmail());
+            updatedUser.setPassword(encodedPassword);
+            updatedUser.setName(userName);
+            updatedUser.setPicture(latestUser.getPicture());
+            updatedUser.setGivenName(latestUser.getGivenName());
+            updatedUser.setFamilyName(latestUser.getFamilyName());
+            updatedUser.setEmailVerified(latestUser.getEmailVerified());
+            updatedUser.setIsMember(latestUser.getIsMember());
+            updatedUser.setMemberExpireTime(latestUser.getMemberExpireTime());
+            updatedUser.setCreatedAt(latestUser.getCreatedAt());
+            updatedUser.setLastLogin(now);
+            updatedUser.setAuthProvider("BOTH");
+            updatedUser.setExternalId(latestUser.getExternalId());
+            // 移除 version 字段的设置
+            updatedUser.setDeleted(latestUser.getDeleted());
+            
+            // 使用 Mapper 直接更新，绕过乐观锁
+            getBaseMapper().updateById(updatedUser);
+            
+            return updatedUser;
         } else {
             // 不支持的认证类型
             log.warn("不支持从{}类型升级为BOTH", user.getAuthProvider());
             throw new UnsupportedAuthTypeException("不支持从" + user.getAuthProvider() + "类型升级为BOTH");
         }
-        
-        // 保存用户更新
-        this.updateById(updatedUser);
-        return updatedUser;
     }
 
     /**
@@ -273,7 +315,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .lastLogin(now)
                 .authProvider("GOOGLE")
                 .externalId(sub)
-                .version(0)
                 .deleted(0)
                 .build();
         
@@ -348,7 +389,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .lastLogin(user.getLastLogin())
                 .authProvider(user.getAuthProvider())
                 .externalId(user.getExternalId())
-                .version(user.getVersion())
+                // 移除 version 字段
                 .deleted(user.getDeleted());
         
         consumer.accept(builder);
