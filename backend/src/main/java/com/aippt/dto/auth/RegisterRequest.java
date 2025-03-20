@@ -20,7 +20,7 @@ public class RegisterRequest {
     private String name;
 
     @NotBlank(message = "密码不能为空")
-    @Size(min = 8, message = "密码长度不能少于6个字符")
+    @Size(min = 8, message = "密码长度不能少于8个字符")
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[\\p{Punct}])[A-Za-z\\d\\p{Punct}]{8,}$",
             message = "密码必须包含至少一个大写字母、一个小写字母、一个数字和一个特殊字符"
