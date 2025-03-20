@@ -286,26 +286,34 @@ document.addEventListener('DOMContentLoaded', function() {
         credentials: 'include'
     })
     .then(response => {
-        if (response.ok) {
-            return response.json();
+        if (!response.ok) {
+            throw new Error(`登录失败: ${response.status}`);
         }
-        throw new Error('未登录');
+        return response.json();
     })
     .then(user => {
+        if (!user || !user.id) {
+            throw new Error('无效的用户数据');
+        }
         // 用户已登录，显示用户信息
         document.querySelector('.auth-buttons').innerHTML = `
             <div class="user-container">
-                <img class="user-avatar" src="${user.picture}" alt="User Avatar">
+                <img class="user-avatar" src="${user.picture || 'default-avatar.png'}" alt="User Avatar">
                 <div class="user-details">
-                    <span class="user-name">${user.name}</span>
-                    <span class="user-email">${user.email}</span>
+                    <span class="user-name">${user.name || 'Unknown User'}</span>
+                    <span class="user-email">${user.email || ''}</span>
                 </div>
                 <button onclick="logout()" class="login-btn">Sign out</button>
             </div>
         `;
     })
     .catch(error => {
-        console.log('用户未登录或发生错误:', error);
+        console.error('登录状态检查失败:', error);
+        // 确保用户未登录时显示登录按钮
+        document.querySelector('.auth-buttons').innerHTML = `
+            <button onclick="window.location.href=window.config.googleAuthUrl" class="login-btn">Log in</button>
+            <button onclick="window.location.href='register.html'" class="signup-btn">Sign up</button>
+        `;
     });
 });
 
