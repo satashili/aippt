@@ -2,7 +2,9 @@ package com.aippt.service;
 
 import com.aippt.entity.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import com.aippt.exception.UserNotFoundException;
 
 /**
  * 用户服务接口
@@ -47,12 +49,15 @@ public interface UserService {
     User processGoogleLogin(OAuth2User oAuth2User);
     
     /**
-     * 更新用户的会员状态
-     * 如果用户已是会员且会员未过期，则在原有期限上延长；否则从当前时间开始计算
-     * 
-     * @param userId 用户ID
-     * @param monthsToAdd 增加的会员月数
+     * 更新用户的会员属性
+     * 仅负责更新用户实体的会员相关字段，不包含业务逻辑判断
+     *
+     * @param userId 要更新的用户ID
+     * @param isMember 是否为会员 
+     * @param expireTime 会员到期时间
      * @return 更新是否成功
+     * @throws UserNotFoundException 当用户ID不存在时抛出
      */
-    boolean updateMemberStatus(String userId, int monthsToAdd);
+    boolean updateUserMembership(String userId, boolean isMember, LocalDateTime expireTime);
+
 }

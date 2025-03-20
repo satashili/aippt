@@ -26,6 +26,17 @@ public class PasswordUtils {
     }
     
     /**
+     * 处理密码加密，如果密码为空则返回null
+     * 主要用于用户更新场景
+     * 
+     * @param password 原始密码，可能为null
+     * @return 加密后的密码或null
+     */
+    public static String processPassword(String password) {
+        return password != null ? encodePassword(password) : null;
+    }
+    
+    /**
      * 验证密码
      * 
      * @param rawPassword 原始密码

@@ -4,6 +4,7 @@ import com.aippt.entity.User;
 import com.aippt.exception.OAuthProcessingException;
 import com.aippt.exception.UserAlreadyExistsException;
 import com.aippt.exception.UserNotFoundException;
+import com.aippt.exception.UnsupportedAuthTypeException;
 import com.aippt.mapper.UserMapper;
 import com.aippt.service.UserService;
 import com.aippt.util.PasswordUtils;
@@ -18,41 +19,65 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * 用户服务实现类
+ * 提供用户注册、登录、信息更新等功能
+ * 支持本地注册和Google OAuth2登录两种认证方式
+ */
 @Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
+    /**
+     * 根据用户ID查询用户信息
+     *
+     * @param id 用户ID
+     * @return 用户信息封装为Optional，如果不存在则为empty
+     */
     @Override
     public Optional<User> findById(String id) {
         return Optional.ofNullable(this.getById(id));
     }
 
+    /**
+     * 更新用户的会员属性
+     * 仅负责更新用户实体的会员相关字段，不包含业务逻辑判断
+     *
+     * @param userId 要更新的用户ID
+     * @param isMember 是否为会员
+     * @param expireTime 会员到期时间
+     * @return 更新是否成功
+     * @throws UserNotFoundException 当用户ID不存在时抛出
+     */
     @Override
     @Transactional
-    public boolean updateMemberStatus(String userId, int monthsToAdd) {
+    public boolean updateUserMembership(String userId, boolean isMember, LocalDateTime expireTime) {
         User existingUser = this.getById(userId);
         if (existingUser == null) {
             log.error("用户不存在: {}", userId);
             throw new UserNotFoundException("用户不存在: " + userId);
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime newExpireTime;
-
-        if (existingUser.getMemberExpireTime() != null && existingUser.getMemberExpireTime().isAfter(now)) {
-            newExpireTime = existingUser.getMemberExpireTime().plusMonths(monthsToAdd);
-        } else {
-            newExpireTime = now.plusMonths(monthsToAdd);
-        }
-
         User updatedUser = buildUserWithUpdatedFields(existingUser, builder -> {
-            builder.isMember(true).memberExpireTime(newExpireTime);
+            builder.isMember(isMember).memberExpireTime(expireTime);
         });
 
-        log.info("更新用户会员状态: {}, 新到期时间: {}", userId, newExpireTime);
+        log.info("更新用户会员状态: {}, 会员状态: {}, 到期时间: {}", userId, isMember, expireTime);
         return this.updateById(updatedUser);
     }
     
+    /**
+     * 用户注册方法
+     * 支持两种情况：
+     * 1. 全新用户的本地注册
+     * 2. 已有Google用户设置密码升级为双重认证(BOTH)
+     *
+     * @param email 用户邮箱
+     * @param name 用户名
+     * @param password 用户密码（未加密）
+     * @return 注册成功的用户对象
+     * @throws UserAlreadyExistsException 当邮箱已存在且不是Google用户时抛出
+     */
     @Override
     @Transactional
     public User register(String email, String name, String password) {
@@ -66,7 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if ("GOOGLE".equals(existingUser.getAuthProvider())) {
                 // 用户已通过 Google 登录，升级为 BOTH 类型
                 log.info("Google用户设置密码，升级为双重认证: {}", email);
-                return upgradeGoogleUserToLocal(existingUser, password, name);
+                return upgradeUserToBoth(existingUser, password, name, null, null);
             } else {
                 // 用户已通过其他方式注册，抛出异常
                 log.warn("邮箱已被注册: {}", email);
@@ -79,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LocalDateTime now = LocalDateTime.now();
         
         // 加密密码
-        String encodedPassword = PasswordUtils.encodePassword(password);
+        String encodedPassword = PasswordUtils.processPassword(password);
         
         // 创建新用户
         User newUser = User.builder()
@@ -105,45 +130,90 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 将Google用户升级为双重认证用户
+     * 将用户升级为双重认证用户(BOTH)
+     * 该方法可以处理两种升级场景：
+     * 1. LOCAL用户添加Google认证
+     * 2. GOOGLE用户添加本地密码认证
+     *
+     * @param user 现有用户
+     * @param password 新密码(从GOOGLE升级到BOTH时需要)
+     * @param name 用户名(从GOOGLE升级到BOTH时可选)
+     * @param googleId Google用户ID(从LOCAL升级到BOTH时需要)
+     * @param oAuth2User Google用户信息(从LOCAL升级到BOTH时需要)
+     * @return 更新后的用户
+     * @throws UnsupportedAuthTypeException 当用户认证类型不支持升级时抛出
      */
-    private User upgradeGoogleUserToLocal(User user, String password, String name) {
-        String encodedPassword = PasswordUtils.encodePassword(password);
+    private User upgradeUserToBoth(User user, String password, String name, String googleId, OAuth2User oAuth2User) {
         LocalDateTime now = LocalDateTime.now();
+        User updatedUser;
         
-        // 如果提供了新名字且原用户名为空，则更新用户名
-        String userName = (user.getName() == null || user.getName().isEmpty()) ? name : user.getName();
+        // 根据用户类型处理不同的升级场景
+        if ("LOCAL".equals(user.getAuthProvider())) {
+            // LOCAL → BOTH：本地用户添加Google认证
+            log.info("本地用户升级为双重认证: {}", user.getEmail());
+            
+            // 使用通用的构建器更新用户信息
+            updatedUser = buildUserWithUpdatedFields(user, builder -> {
+                builder.authProvider("BOTH")
+                       .externalId(googleId)
+                       .lastLogin(now)
+                       .name(oAuth2User.getAttribute("name"))
+                       .picture(oAuth2User.getAttribute("picture"))
+                       .givenName(oAuth2User.getAttribute("given_name"))
+                       .familyName(oAuth2User.getAttribute("family_name"))
+                       .emailVerified(true);
+            });
+            
+        } else if ("GOOGLE".equals(user.getAuthProvider())) {
+            // GOOGLE → BOTH：Google用户添加本地密码
+            log.info("Google用户设置密码，升级为双重认证: {}", user.getEmail());
+            
+            // 确定用户名
+            final String userName = user.getName() != null && !user.getName().isEmpty() ? 
+                user.getName() : (name != null && !name.isEmpty() ? name : user.getEmail());
+            
+            // 加密密码
+            String encodedPassword = PasswordUtils.encodePassword(password);
+            
+            // 构建更新后的用户
+            updatedUser = buildUserWithUpdatedFields(user, builder -> {
+                builder.name(userName)
+                       .password(encodedPassword)
+                       .lastLogin(now)
+                       .authProvider("BOTH");
+            });
+        } else {
+            // 不支持的认证类型
+            log.warn("不支持从{}类型升级为BOTH", user.getAuthProvider());
+            throw new UnsupportedAuthTypeException("不支持从" + user.getAuthProvider() + "类型升级为BOTH");
+        }
         
-        User updatedUser = User.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(userName)
-                .password(encodedPassword)  // 设置密码
-                .picture(user.getPicture())
-                .givenName(user.getGivenName())
-                .familyName(user.getFamilyName())
-                .emailVerified(user.getEmailVerified())
-                .isMember(user.getIsMember())
-                .memberExpireTime(user.getMemberExpireTime())
-                .createdAt(user.getCreatedAt())
-                .lastLogin(now)
-                .authProvider("BOTH")  // 升级为双重认证
-                .externalId(user.getExternalId())
-                .version(user.getVersion())
-                .deleted(user.getDeleted())
-                .build();
-        
-        log.info("Google用户设置密码，升级为双重认证: {}", user.getEmail());
+        // 保存用户更新
         this.updateById(updatedUser);
-        
         return updatedUser;
     }
 
+    /**
+     * 获取系统中的用户总数
+     *
+     * @return 用户数量
+     */
     @Override
     public long getUserCount() {
         return this.count();
     }
 
+    /**
+     * 处理Google OAuth2登录
+     * 根据用户是否存在及认证类型，执行不同的处理：
+     * 1. 用户不存在：创建新的Google用户
+     * 2. 用户存在且为LOCAL：升级为BOTH类型
+     * 3. 用户存在且为GOOGLE/BOTH：更新Google信息
+     *
+     * @param oAuth2User Google认证返回的用户信息
+     * @return 处理后的用户对象
+     * @throws OAuthProcessingException 当Google登录信息不完整时抛出
+     */
     @Override
     @Transactional
     public User processGoogleLogin(OAuth2User oAuth2User) {
@@ -168,7 +238,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         } else {
             // 用户存在，根据认证类型处理
             if ("LOCAL".equals(user.getAuthProvider())) {
-                return upgradeToGoogleLogin(user, sub, oAuth2User);
+                return upgradeUserToBoth(user, null, null, sub, oAuth2User);
             } else {
                 return updateGoogleUser(user, sub, oAuth2User);
             }
@@ -177,6 +247,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     
     /**
      * 创建新的Google用户
+     * 从OAuth2User中提取用户信息，创建一个新的GOOGLE类型用户
+     *
+     * @param sub Google用户ID (Subject)
+     * @param oAuth2User Google返回的用户信息
+     * @return 创建的新用户
      */
     private User createGoogleUser(String sub, OAuth2User oAuth2User) {
         String email = oAuth2User.getAttribute("email");
@@ -209,39 +284,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
     
     /**
-     * 将本地用户升级为双重认证用户
-     */
-    private User upgradeToGoogleLogin(User user, String sub, OAuth2User oAuth2User) {
-        LocalDateTime now = LocalDateTime.now();
-        
-        User updatedUser = updateUserFromOAuth2(user, oAuth2User, now);
-        updatedUser = buildUserWithUpdatedFields(updatedUser, builder -> {
-            builder.authProvider("BOTH").externalId(sub);
-        });
-        
-        log.info("升级用户为双重认证: {}", user.getEmail());
-        this.updateById(updatedUser);
-        
-        return updatedUser;
-    }
-    
-    /**
      * 更新Google用户信息
+     * 适用于已经是GOOGLE或BOTH类型的用户再次通过Google登录时
+     * 
+     * @param user 当前用户
+     * @param sub Google用户ID
+     * @param oAuth2User Google返回的用户信息
+     * @return 更新后的用户
      */
     private User updateGoogleUser(User user, String sub, OAuth2User oAuth2User) {
-        // 检查externalId是否需要更新
-        if (!"BOTH".equals(user.getAuthProvider()) && !"GOOGLE".equals(user.getAuthProvider())) {
-            log.warn("用户认证类型不匹配: {}, authProvider={}", user.getEmail(), user.getAuthProvider());
-            user.setAuthProvider("GOOGLE");
-        }
-        
-        if (!sub.equals(user.getExternalId())) {
-            log.warn("用户Google ID不匹配: {}, oldId={}, newId={}", user.getEmail(), user.getExternalId(), sub);
-            user.setExternalId(sub);
-        }
-        
         LocalDateTime now = LocalDateTime.now();
-        User updatedUser = updateUserFromOAuth2(user, oAuth2User, now);
+        
+        // 更新用户认证相关信息
+        User updatedUser = buildUserWithUpdatedFields(user, builder -> {
+            // 检查认证类型是否正确
+            if (!"BOTH".equals(user.getAuthProvider()) && !"GOOGLE".equals(user.getAuthProvider())) {
+                log.warn("用户认证类型不匹配: {}, authProvider={}", user.getEmail(), user.getAuthProvider());
+                builder.authProvider("GOOGLE");
+            }
+            
+            // 检查Google ID是否匹配
+            if (!sub.equals(user.getExternalId())) {
+                log.warn("用户Google ID不匹配: {}, oldId={}, newId={}", user.getEmail(), user.getExternalId(), sub);
+                builder.externalId(sub);
+            }
+            
+            // 更新登录时间和Google用户信息
+            builder.lastLogin(now)
+                   .name(oAuth2User.getAttribute("name"))
+                   .picture(oAuth2User.getAttribute("picture"))
+                   .givenName(oAuth2User.getAttribute("given_name"))
+                   .familyName(oAuth2User.getAttribute("family_name"))
+                   .emailVerified(true);
+        });
         
         log.info("更新Google用户信息: {}", user.getEmail());
         this.updateById(updatedUser);
@@ -250,31 +325,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
     
     /**
-     * 从OAuth2User更新用户基本信息
-     */
-    private User updateUserFromOAuth2(User user, OAuth2User oAuth2User, LocalDateTime loginTime) {
-        return User.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(oAuth2User.getAttribute("name"))
-                .password(user.getPassword())
-                .picture(oAuth2User.getAttribute("picture"))
-                .givenName(oAuth2User.getAttribute("given_name"))
-                .familyName(oAuth2User.getAttribute("family_name"))
-                .emailVerified(true)
-                .isMember(user.getIsMember())
-                .memberExpireTime(user.getMemberExpireTime())
-                .createdAt(user.getCreatedAt())
-                .lastLogin(loginTime)
-                .authProvider(user.getAuthProvider())
-                .externalId(user.getExternalId())
-                .version(user.getVersion())
-                .deleted(user.getDeleted())
-                .build();
-    }
-    
-    /**
      * 使用构建器模式更新用户部分字段
+     * 保留用户的大部分属性不变，只更新指定的字段
+     *
+     * @param user 原用户对象
+     * @param consumer 接收User.Builder并进行修改的函数式接口
+     * @return 更新后的用户对象
      */
     private User buildUserWithUpdatedFields(User user, UserBuilderConsumer consumer) {
         User.UserBuilder builder = User.builder()
@@ -302,9 +358,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     
     /**
      * 用于更新用户字段的函数式接口
+     * 接收一个User.Builder，对其进行修改后返回
      */
     @FunctionalInterface
     private interface UserBuilderConsumer {
+        /**
+         * 接收并操作User.Builder
+         * 
+         * @param builder 用户构建器
+         */
         void accept(User.UserBuilder builder);
     }
 }
