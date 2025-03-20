@@ -1,10 +1,14 @@
 package com.aippt.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("users")
 public class User {
     
@@ -14,6 +18,9 @@ public class User {
     private String name;
     private String email;
     private String picture;
+    
+    @TableField(value = "password", select = false)
+    private String password;
     
     @TableField("given_name")
     private String givenName;
