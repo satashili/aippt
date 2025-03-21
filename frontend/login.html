@@ -398,7 +398,7 @@
                         window.location.href = 'index.html';
                     } else {
                         // Display error message
-                        showError(data.message || 'Login failed, please check your credentials');
+                        showError(data.message || '登录失败，请检查您的凭据');
                         
                         // Reset button
                         submitBtn.textContent = 'Log in';
@@ -433,7 +433,7 @@
                 errorContainer.style.display = 'block';
                 errorMessage.textContent = message;
                 
-                // Automatically hide error message after 5 seconds
+                // 自动隐藏错误信息（5秒后）
                 setTimeout(function() {
                     errorContainer.style.display = 'none';
                 }, 5000);
