@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Smart PPT Generator</title>
+    <title>Login - Smart PPT Generator</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Registration form specific styles */
-        .register-section {
+        /* Login form specific styles */
+        .login-section {
             padding: 80px 0;
             display: flex;
             justify-content: center;
@@ -16,8 +16,8 @@
             min-height: calc(100vh - 300px);
         }
         
-        .register-container {
-            max-width: 500px;
+        .login-container {
+            max-width: 450px;
             width: 100%;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -27,23 +27,23 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
         }
         
-        .register-header {
+        .login-header {
             text-align: center;
             margin-bottom: 30px;
         }
         
-        .register-form .form-group {
+        .login-form .form-group {
             margin-bottom: 20px;
         }
         
-        .register-form label {
+        .login-form label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
             color: #e4e4e4;
         }
         
-        .register-form input {
+        .login-form input {
             width: 100%;
             padding: 12px 15px;
             background: rgba(255, 255, 255, 0.07);
@@ -54,13 +54,13 @@
             transition: all 0.3s ease;
         }
         
-        .register-form input:focus {
+        .login-form input:focus {
             outline: none;
             border-color: #3498db;
             background: rgba(255, 255, 255, 0.1);
         }
         
-        .register-form .submit-btn {
+        .login-form .submit-btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #3498db, #2980b9);
@@ -74,7 +74,7 @@
             margin-top: 10px;
         }
         
-        .register-form .submit-btn:hover {
+        .login-form .submit-btn:hover {
             background: linear-gradient(135deg, #2980b9, #3498db);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -128,19 +128,34 @@
             color: #DB4437;
         }
         
-        .login-link {
+        .signup-link {
             text-align: center;
             margin-top: 20px;
             color: #e4e4e4;
         }
         
-        .login-link a {
+        .signup-link a {
             color: #3498db;
             text-decoration: none;
             font-weight: 500;
         }
         
-        .login-link a:hover {
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .forgot-password a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
             text-decoration: underline;
         }
     </style>
@@ -167,26 +182,21 @@
                 <li><a href="index.html#contact">Contact Us</a></li>
             </ul>
             <div class="auth-buttons">
-                <button onclick="window.location.href=window.config.googleAuthUrl" class="login-btn">Log in</button>
-                <button class="signup-btn active">Sign up</button>
+                <button class="login-btn active">Log in</button>
+                <button onclick="window.location.href='register.html'" class="signup-btn">Sign up</button>
             </div>
         </nav>
     </header>
 
     <main>
-        <section class="register-section">
-            <div class="register-container">
-                <div class="register-header">
-                    <h2>Create Your Account</h2>
-                    <p>Join us and start creating beautiful presentations with AI</p>
+        <section class="login-section">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>Welcome Back</h2>
+                    <p>Log in to your account to continue using our services</p>
                 </div>
                 
-                <form class="register-form" id="registerForm">
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" placeholder="Enter your name" required>
-                    </div>
-                    
+                <form class="login-form" id="loginForm">
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -194,32 +204,18 @@
                     
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Create a password (min. 6 characters)" required>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <div class="forgot-password">
+                            <a href="#" id="forgotPassword">Forgot password?</a>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-                    </div>
-                    
-                    <!-- 添加错误消息显示区域 -->
+                    <!-- Error message display area -->
                     <div id="error-container" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px; background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); color: #ff6b6b;">
                         <p id="error-message"></p>
-                        <ul id="error-details"></ul>
                     </div>
                     
-                    <div class="password-requirements">
-                        <p>Password must:</p>
-                        <ul>
-                            <li>Be at least 8 characters long</li>
-                            <li>Include at least one uppercase letter</li>
-                            <li>Include at least one lowercase letter</li>
-                            <li>Include at least one number</li>
-                            <li>Include at least one special character (@$!%*?&)</li>
-                        </ul>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">Create Account</button>
+                    <button type="submit" class="submit-btn">Log in</button>
                 </form>
                 
                 <div class="divider">
@@ -232,8 +228,8 @@
                     </button>
                 </div>
                 
-                <div class="login-link">
-                    Already have an account? <a href="login.html">Log in</a>
+                <div class="signup-link">
+                    Don't have an account? <a href="register.html">Sign up now</a>
                 </div>
             </div>
         </section>
@@ -336,167 +332,134 @@
                 retina_detect: true
             });
             
-            // Form submission handling
-            const registerForm = document.getElementById('registerForm');
-            registerForm.addEventListener('submit', function(e) {
+            // Login form handling
+            const loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
                 
-                // 打印表单数据
-                console.log('==================== 表单数据 ====================');
-                console.log('用户名:', name);
-                console.log('邮箱:', email);
-                console.log('密码长度:', password.length);
-                console.log('确认密码长度:', confirmPassword.length);
+                // Print form data (in development environment only)
+                console.log('==================== Form Data ====================');
+                console.log('Email:', email);
+                console.log('Password length:', password.length);
                 console.log('=====================================================');
                 
                 // Simple form validation
-                if (!name || !email || !password || !confirmPassword) {
-                    console.log('表单验证失败: 请填写所有必填字段');
-                    alert('Please fill in all required fields');
-                    return;
-                }
-                
-                if (password !== confirmPassword) {
-                    console.log('表单验证失败: 密码不匹配');
-                    alert('Passwords do not match');
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    console.log('表单验证失败: 密码长度不足');
-                    alert('Password must be at least 6 characters long');
+                if (!email || !password) {
+                    console.log('Form validation failed: Please fill in all required fields');
+                    showError('Please fill in all required fields');
                     return;
                 }
                 
                 // Loading state
                 const submitBtn = document.querySelector('.submit-btn');
-                submitBtn.textContent = 'Creating account...';
+                submitBtn.textContent = 'Logging in...';
                 submitBtn.disabled = true;
                 
-                // 打印请求数据
+                // Prepare request data
                 const requestData = {
-                    name: name,
                     email: email,
                     password: password
                 };
-                console.log('==================== 发送请求数据 ====================');
-                console.log('请求URL:', `${window.config.apiBaseUrl}/api/auth/register`);
-                console.log('请求数据:', JSON.stringify(requestData, null, 2));
+                
+                console.log('==================== Sending Request Data ====================');
+                console.log('Request URL:', `${window.config.apiBaseUrl}/api/auth/login`);
+                console.log('Request Data:', JSON.stringify(requestData, null, 2));
                 console.log('=====================================================');
                 
-                // Send registration request
-                fetch(`${window.config.apiBaseUrl}/api/auth/register`, {
+                // Send login request
+                fetch(`${window.config.apiBaseUrl}/api/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(requestData)
+                    body: JSON.stringify(requestData),
+                    credentials: 'include'
                 })
                 .then(response => {
-                    console.log('==================== 收到响应 ====================');
-                    console.log('响应状态:', response.status);
+                    console.log('==================== Received Response ====================');
+                    console.log('Response Status:', response.status);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Request failed with status code: ${response.status}`);
+                    }
+                    
                     return response.json();
                 })
                 .then(data => {
-                    console.log('响应数据:', JSON.stringify(data, null, 2));
+                    console.log('Response Data:', JSON.stringify(data, null, 2));
                     console.log('=====================================================');
                     
                     if (data.success) {
-                        console.log('注册成功，准备跳转到登录页面');
-                        alert('Registration successful! Redirecting to login page...');
-                        window.location.href = window.config.googleAuthUrl;
+                        // Login successful, redirect to homepage or dashboard
+                        console.log('Login successful, redirecting to homepage');
+                        window.location.href = 'index.html';
                     } else {
-                        // 重置按钮
-                        submitBtn.textContent = 'Create Account';
+                        // Display error message
+                        showError(data.message || 'Login failed, please check your credentials');
+                        
+                        // Reset button
+                        submitBtn.textContent = 'Log in';
                         submitBtn.disabled = false;
-                        
-                        // 显示错误容器
-                        const errorContainer = document.getElementById('error-container');
-                        const errorMessage = document.getElementById('error-message');
-                        const errorDetails = document.getElementById('error-details');
-                        
-                        errorContainer.style.display = 'block';
-                        errorDetails.innerHTML = '';
-                        
-                        if (data.errors) {
-                            // 处理字段验证错误
-                            console.log('==================== 验证错误 ====================');
-                            errorMessage.textContent = '注册失败，请检查以下错误：';
-                            
-                            for (const field in data.errors) {
-                                console.log(`字段 ${field} 错误:`, data.errors[field]);
-                                // 添加到错误详情列表
-                                const errorItem = document.createElement('li');
-                                errorItem.textContent = `${getFieldDisplayName(field)}: ${data.errors[field]}`;
-                                errorDetails.appendChild(errorItem);
-                            }
-                            console.log('=====================================================');
-                        } else {
-                            // 处理一般错误
-                            console.log('注册失败:', data.message || '未知错误');
-                            errorMessage.textContent = `注册失败: ${data.message || '未知错误'}`;
-                            
-                            // 显示错误类型
-                            if (data.errorType) {
-                                const errorTypeItem = document.createElement('li');
-                                errorTypeItem.textContent = `错误类型: ${getErrorTypeDisplayName(data.errorType)}`;
-                                errorDetails.appendChild(errorTypeItem);
-                            }
-                            
-                            // 显示错误详情
-                            if (data.errorDetails) {
-                                for (const key in data.errorDetails) {
-                                    const errorItem = document.createElement('li');
-                                    errorItem.textContent = `${key}: ${data.errorDetails[key]}`;
-                                    errorDetails.appendChild(errorItem);
-                                }
-                            }
-                        }
                     }
                 })
                 .catch(error => {
-                    console.error('==================== 请求错误 ====================');
-                    console.error('错误详情:', error);
+                    console.error('==================== Request Error ====================');
+                    console.error('Error Details:', error);
                     console.error('=====================================================');
                     
-                    // 重置按钮
-                    submitBtn.textContent = 'Create Account';
-                    submitBtn.disabled = false;
+                    // Display error message
+                    showError('Login failed, please check your credentials or network connection');
                     
-                    // 显示网络错误
-                    const errorContainer = document.getElementById('error-container');
-                    const errorMessage = document.getElementById('error-message');
-                    errorContainer.style.display = 'block';
-                    errorMessage.textContent = '连接服务器失败，请检查网络连接或稍后再试。';
+                    // Reset button
+                    submitBtn.textContent = 'Log in';
+                    submitBtn.disabled = false;
                 });
             });
             
-            // 辅助函数：将字段名转换为显示名称
-            function getFieldDisplayName(field) {
-                const fieldNames = {
-                    'name': '用户名',
-                    'email': '邮箱',
-                    'password': '密码',
-                    'confirmPassword': '确认密码'
-                };
-                return fieldNames[field] || field;
+            // Forgot password click event
+            document.getElementById('forgotPassword').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Forgot password feature coming soon!');
+            });
+            
+            // Display error message
+            function showError(message) {
+                const errorContainer = document.getElementById('error-container');
+                const errorMessage = document.getElementById('error-message');
+                
+                errorContainer.style.display = 'block';
+                errorMessage.textContent = message;
+                
+                // Automatically hide error message after 5 seconds
+                setTimeout(function() {
+                    errorContainer.style.display = 'none';
+                }, 5000);
             }
             
-            // 辅助函数：将错误类型转换为显示名称
-            function getErrorTypeDisplayName(errorType) {
-                const errorTypes = {
-                    'USER_EXISTS': '用户已存在',
-                    'INVALID_INPUT': '输入无效',
-                    'INTERNAL_ERROR': '内部错误'
-                };
-                return errorTypes[errorType] || errorType;
-            }
+            // Check if already logged in
+            fetch(`${window.config.apiBaseUrl}/user`, {
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Login status check failed: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(user => {
+                if (user && user.id) {
+                    // Already logged in, redirect to homepage
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch(error => {
+                console.log('User not logged in or error checking login status:', error);
+                // User not logged in, continue showing login page
+            });
         });
     </script>
 </body>
-</html>
+</html> 
