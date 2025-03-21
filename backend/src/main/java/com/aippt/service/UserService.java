@@ -5,6 +5,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import com.aippt.exception.UserNotFoundException;
+import com.aippt.exception.InvalidPasswordException;
 
 /**
  * 用户服务接口
@@ -60,4 +61,15 @@ public interface UserService {
      */
     boolean updateUserMembership(String userId, boolean isMember, LocalDateTime expireTime);
 
+    /**
+     * 用户登录
+     * 验证用户邮箱和密码，返回用户信息
+     *
+     * @param email 用户邮箱
+     * @param password 用户密码（未加密）
+     * @return 登录成功的用户信息
+     * @throws UserNotFoundException 当用户不存在时抛出
+     * @throws InvalidPasswordException 当密码不正确时抛出
+     */
+    User login(String email, String password);
 }

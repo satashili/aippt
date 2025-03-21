@@ -5,6 +5,7 @@ import com.aippt.exception.OAuthProcessingException;
 import com.aippt.exception.UserAlreadyExistsException;
 import com.aippt.exception.UserNotFoundException;
 import com.aippt.exception.UnsupportedAuthTypeException;
+import com.aippt.exception.InvalidPasswordException;
 import com.aippt.mapper.UserMapper;
 import com.aippt.service.UserService;
 import com.aippt.util.PasswordUtils;
@@ -409,5 +410,57 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
          * @param builder 用户构建器
          */
         void accept(User.UserBuilder builder);
+    }
+
+    /**
+     * 用户登录方法
+     * 验证用户邮箱和密码，更新最后登录时间
+     *
+     * @param email 用户邮箱
+     * @param password 用户密码（未加密）
+     * @return 登录成功的用户信息
+     * @throws UserNotFoundException 当用户不存在时抛出
+     * @throws InvalidPasswordException 当密码不正确时抛出
+     */
+    @Override
+    @Transactional
+    public User login(String email, String password) {
+        log.info("用户登录: {}", email);
+        
+        // 查询用户
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getEmail, email);
+        User user = this.getOne(queryWrapper);
+        
+        // 检查用户是否存在
+        if (user == null) {
+            log.warn("登录失败: 用户不存在 {}", email);
+            throw new UserNotFoundException("用户不存在或邮箱错误");
+        }
+        
+        // 检查用户类型是否支持密码登录
+        if ("GOOGLE".equals(user.getAuthProvider())) {
+            log.warn("登录失败: Google用户尝试使用密码登录 {}", email);
+            throw new InvalidPasswordException("该账号是通过Google注册的，请使用Google登录");
+        }
+        
+        // 验证密码
+        try {
+            PasswordUtils.validatePassword(password, user.getPassword());
+        } catch (InvalidPasswordException e) {
+            log.warn("登录失败: 密码错误 {}", email);
+            throw e; // 重新抛出异常
+        }
+        
+        // 更新最后登录时间
+        LocalDateTime now = LocalDateTime.now();
+        User updatedUser = buildUserWithUpdatedFields(user, builder -> {
+            builder.lastLogin(now);
+        });
+        
+        this.updateById(updatedUser);
+        
+        log.info("用户登录成功: {}", email);
+        return updatedUser;
     }
 }
