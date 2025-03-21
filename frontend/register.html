@@ -407,9 +407,51 @@
                     console.log('=====================================================');
                     
                     if (data.success) {
-                        console.log('注册成功，准备跳转到登录页面');
-                        alert('Registration successful! Redirecting to login page...');
-                        window.location.href = window.config.googleAuthUrl;
+                        console.log('注册成功，提示用户检查邮箱');
+                        
+                        // 隐藏注册表单，显示成功信息
+                        const registerContainer = document.querySelector('.register-container');
+                        registerContainer.innerHTML = `
+                            <div style="text-align: center;">
+                                <div style="font-size: 64px; color: #2ecc71; margin-bottom: 20px;">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <h2>Registration Successful!</h2>
+                                <p style="margin-bottom: 20px;">Thank you for registering! We've sent a verification email to <strong>${email}</strong>.</p>
+                                <p style="margin-bottom: 30px;">Please check your inbox and click on the verification link to activate your account.</p>
+                                <p style="margin-bottom: 20px; font-size: 14px; color: #aaa;">
+                                    Didn't receive the email? Check your spam folder or 
+                                    <a href="#" id="resendVerificationBtn" style="color: #3498db; text-decoration: none;">click here to resend</a>.
+                                </p>
+                                <div>
+                                    <a href="login.html" style="background: transparent; color: #3498db; border: 1px solid #3498db; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block;">Go to Login Page</a>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // 添加重发验证邮件的事件监听
+                        document.getElementById('resendVerificationBtn').addEventListener('click', function(e) {
+                            e.preventDefault();
+                            
+                            fetch(`${window.config.apiBaseUrl}/api/auth/resend-verification?email=${encodeURIComponent(email)}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Verification email has been resent. Please check your inbox.');
+                                } else {
+                                    alert(data.message || 'Failed to resend verification email. Please try again later.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error resending verification email:', error);
+                                alert('An error occurred while trying to resend the verification email. Please try again later.');
+                            });
+                        });
                     } else {
                         // 重置按钮
                         submitBtn.textContent = 'Create Account';

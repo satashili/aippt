@@ -433,6 +433,70 @@
                 errorContainer.style.display = 'block';
                 errorMessage.textContent = message;
                 
+                // 检查是否需要添加"重新发送验证邮件"链接
+                if (message.includes('verify your email') || message.includes('verify') || message.includes('verification')) {
+                    // 在错误消息下方添加"重新发送验证邮件"链接
+                    if (!document.getElementById('resend-verification-link')) {
+                        const resendLink = document.createElement('p');
+                        resendLink.style.marginTop = '10px';
+                        resendLink.innerHTML = '<a href="#" id="resend-verification-link" style="color: #3498db; text-decoration: underline;">Resend verification email</a>';
+                        errorMessage.parentNode.appendChild(resendLink);
+                        
+                        // 添加重发验证邮件的事件监听
+                        document.getElementById('resend-verification-link').addEventListener('click', function(e) {
+                            e.preventDefault();
+                            
+                            const email = document.getElementById('email').value;
+                            if (!email) {
+                                alert('Please enter your email address first.');
+                                return;
+                            }
+                            
+                            // 显示加载状态
+                            const resendLink = this;
+                            resendLink.textContent = 'Sending...';
+                            resendLink.style.pointerEvents = 'none';
+                            
+                            // 发送请求
+                            fetch(`${window.config.apiBaseUrl}/api/auth/resend-verification?email=${encodeURIComponent(email)}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // 更新错误消息为成功信息
+                                    errorContainer.style.backgroundColor = 'rgba(46, 204, 113, 0.1)';
+                                    errorContainer.style.borderColor = 'rgba(46, 204, 113, 0.3)';
+                                    errorMessage.textContent = 'Verification email has been sent. Please check your inbox.';
+                                    
+                                    // 移除重发链接
+                                    resendLink.parentNode.remove();
+                                } else {
+                                    // 恢复链接状态
+                                    resendLink.textContent = 'Resend verification email';
+                                    resendLink.style.pointerEvents = 'auto';
+                                    
+                                    // 显示失败消息
+                                    alert(data.message || 'Failed to resend verification email. Please try again later.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error resending verification email:', error);
+                                
+                                // 恢复链接状态
+                                resendLink.textContent = 'Resend verification email';
+                                resendLink.style.pointerEvents = 'auto';
+                                
+                                // 显示错误消息
+                                alert('An error occurred while trying to resend the verification email. Please try again later.');
+                            });
+                        });
+                    }
+                }
+                
                 // 自动隐藏错误信息（5秒后）
                 setTimeout(function() {
                     errorContainer.style.display = 'none';

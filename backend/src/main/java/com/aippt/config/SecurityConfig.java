@@ -58,7 +58,7 @@ public class SecurityConfig {
                 logger.info("Configuring authorization rules");
                 authorize
                     // 允许这些路径无需认证即可访问
-                    .requestMatchers("/", "/error", "/webjars/**", "/login/**", "/api/auth/register", "/api/auth/login", "/api/test/**").permitAll()
+                    .requestMatchers("/", "/error", "/webjars/**", "/login/**", "/api/auth/register", "/api/auth/login", "/api/auth/verify-email", "/api/auth/resend-verification", "/api/test/**").permitAll()
                     // 其他所有请求都需要认证
                     .anyRequest().authenticated();
             })
