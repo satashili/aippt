@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>演示文稿查看器 - AI Slides</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="presentation-viewer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        window.config = {
+            apiBaseUrl: 'http://localhost:3001',
+            googleAuthUrl: 'http://localhost:8080/oauth2/authorization/google'
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <span>AI</span>Slides
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">首页</a></li>
+                <li><a href="index.html#features">功能</a></li>
+                <li><a href="index.html#templates">模板</a></li>
+                <li><a href="index.html#pricing">价格</a></li>
+                <li><a href="index.html#contact">联系我们</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button onclick="window.location.href=window.config.googleAuthUrl" class="login-btn">登录</button>
+                <button onclick="window.location.href='register.html'" class="signup-btn">注册</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="presentation-controls">
+            <div class="presentation-title">
+                <h1 id="presentation-title">演示文稿</h1>
+            </div>
+            <div class="presentation-actions">
+                <button id="download-btn" class="action-btn">
+                    <i class="fas fa-download"></i> 下载 HTML
+                </button>
+                <button id="print-btn" class="action-btn">
+                    <i class="fas fa-print"></i> 打印
+                </button>
+                <button id="back-btn" class="action-btn" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </button>
+            </div>
+        </div>
+
+        <div class="presentation-container" id="presentation-container">
+            <!-- 演示文稿内容将在这里动态加载 -->
+            <div class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>正在加载演示文稿...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span>AI</span>Slides
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>产品</h4>
+                    <ul>
+                        <li><a href="#">功能</a></li>
+                        <li><a href="#">模板</a></li>
+                        <li><a href="#">价格</a></li>
+                        <li><a href="#">更新日志</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>资源</h4>
+                    <ul>
+                        <li><a href="#">博客</a></li>
+                        <li><a href="#">教程</a></li>
+                        <li><a href="#">支持</a></li>
+                        <li><a href="#">API 文档</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>公司</h4>
+                    <ul>
+                        <li><a href="#">关于我们</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">招聘</a></li>
+                        <li><a href="#">合作伙伴</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>法律</h4>
+                    <ul>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">服务条款</a></li>
+                        <li><a href="#">Cookie 政策</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 AISlides. 保留所有权利。</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+    <script src="claude-api.js"></script>
+    <script src="presentation-viewer.js"></script>
+</body>
+</html> 

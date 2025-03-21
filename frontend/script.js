@@ -137,19 +137,235 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 生成按钮效果
-    const generateBtn = document.querySelector('.generate-btn');
+    const generateBtn = document.querySelector('#generate-btn');
     if (generateBtn) {
-        generateBtn.addEventListener('click', function() {
+        generateBtn.addEventListener('click', async function() {
+            // 获取输入内容
+            const promptText = document.getElementById('presentation-prompt').value.trim();
+            if (!promptText) {
+                alert('请输入演示文稿描述');
+                return;
+            }
+            
+            // 获取选项
+            const styleInput = document.getElementById('style-input');
+            const slideCountSelect = document.getElementById('slide-count-select');
+            const colorThemeInput = document.getElementById('color-theme-input');
+            
+            const style = styleInput ? styleInput.value.trim() : '';
+            const slideCount = slideCountSelect ? slideCountSelect.value : '10-15 slides';
+            const colorTheme = colorThemeInput ? colorThemeInput.value.trim() : '';
+            
+            // 显示加载状态
             this.classList.add('loading');
             
-            // 模拟生成过程
-            setTimeout(() => {
-                this.classList.remove('loading');
+            try {
+                console.log('调用 Claude API 生成演示文稿...');
+                console.log('参数:', { promptText, style, slideCount, colorTheme });
                 
-                // 这里可以添加生成完成后的操作
-                alert('演示文稿生成完成！在实际应用中，这里会显示生成的PPT预览。');
-            }, 3000);
+                // 调用 Claude API 生成演示文稿
+                const presentation = await window.claudeAPI.generatePresentation(
+                    promptText, 
+                    style, 
+                    slideCount, 
+                    colorTheme
+                );
+                
+                console.log('收到演示文稿数据:', presentation);
+                
+                // 将演示文稿数据编码为 URL 参数
+                const presentationData = encodeURIComponent(JSON.stringify(presentation));
+                
+                console.log('准备跳转到演示文稿查看器页面');
+                
+                // 使用 sessionStorage 存储数据
+                sessionStorage.setItem('presentationData', JSON.stringify(presentation));
+                window.location.href = 'presentation-viewer.html';
+            } catch (error) {
+                console.error('生成演示文稿失败:', error);
+                alert(`生成演示文稿失败: ${error.message || '未知错误'}`);
+                this.classList.remove('loading');
+            }
         });
+    }
+
+    // 增强选项组件交互
+    const styleInput = document.getElementById('style-input');
+    if (styleInput) {
+        // 风格选项预设
+        const stylePresets = ['简约商务', '创意设计', '科技感', '赛博朋克', '自然风光', '复古风', '极简主义'];
+        
+        // 创建风格预设标签
+        const stylePresetContainer = document.createElement('div');
+        stylePresetContainer.className = 'preset-tags';
+        
+        stylePresets.forEach(preset => {
+            const tag = document.createElement('span');
+            tag.className = 'preset-tag';
+            tag.textContent = preset;
+            tag.addEventListener('click', () => {
+                styleInput.value = preset;
+                // 移除其他标签的激活状态
+                document.querySelectorAll('.preset-tag').forEach(t => t.classList.remove('active'));
+                // 添加当前标签的激活状态
+                tag.classList.add('active');
+            });
+            stylePresetContainer.appendChild(tag);
+        });
+        
+        // 将预设标签添加到风格输入框后面
+        styleInput.parentNode.appendChild(stylePresetContainer);
+    }
+    
+    // 颜色主题预设
+    const colorThemeInput = document.getElementById('color-theme-input');
+    if (colorThemeInput) {
+        // 创建颜色预设选择器
+        const colorPresetContainer = document.createElement('div');
+        colorPresetContainer.className = 'color-presets';
+        
+        // 预设颜色方案
+        const colorPresets = [
+            { name: '深蓝', color: '#1a73e8' },
+            { name: '翠绿', color: '#0f9d58' },
+            { name: '珊瑚红', color: '#f44336' },
+            { name: '紫罗兰', color: '#673ab7' },
+            { name: '琥珀黄', color: '#ffc107' },
+            { name: '青色', color: '#00bcd4' }
+        ];
+        
+        colorPresets.forEach(preset => {
+            const colorOption = document.createElement('div');
+            colorOption.className = 'color-preset-option';
+            colorOption.style.backgroundColor = preset.color;
+            colorOption.setAttribute('data-color-name', preset.name);
+            
+            // 添加提示文本
+            const tooltip = document.createElement('span');
+            tooltip.className = 'color-tooltip';
+            tooltip.textContent = preset.name;
+            colorOption.appendChild(tooltip);
+            
+            colorOption.addEventListener('click', () => {
+                colorThemeInput.value = preset.name;
+                // 移除其他选项的激活状态
+                document.querySelectorAll('.color-preset-option').forEach(opt => opt.classList.remove('active'));
+                // 添加当前选项的激活状态
+                colorOption.classList.add('active');
+            });
+            
+            colorPresetContainer.appendChild(colorOption);
+        });
+        
+        // 添加自定义颜色选项
+        const customColorOption = document.createElement('div');
+        customColorOption.className = 'color-preset-option custom-color';
+        customColorOption.innerHTML = '<i class="fas fa-plus"></i>';
+        customColorOption.setAttribute('data-color-name', '自定义');
+        
+        const customTooltip = document.createElement('span');
+        customTooltip.className = 'color-tooltip';
+        customTooltip.textContent = '自定义';
+        customColorOption.appendChild(customTooltip);
+        
+        customColorOption.addEventListener('click', () => {
+            const colorPicker = document.createElement('input');
+            colorPicker.type = 'color';
+            colorPicker.style.opacity = '0';
+            colorPicker.style.position = 'absolute';
+            colorPicker.style.pointerEvents = 'none';
+            
+            document.body.appendChild(colorPicker);
+            colorPicker.click();
+            
+            colorPicker.addEventListener('input', function() {
+                customColorOption.style.backgroundColor = this.value;
+                colorThemeInput.value = this.value;
+            });
+            
+            colorPicker.addEventListener('change', function() {
+                document.body.removeChild(this);
+                // 移除其他选项的激活状态
+                document.querySelectorAll('.color-preset-option').forEach(opt => opt.classList.remove('active'));
+                // 添加当前选项的激活状态
+                customColorOption.classList.add('active');
+            });
+        });
+        
+        colorPresetContainer.appendChild(customColorOption);
+        colorThemeInput.parentNode.appendChild(colorPresetContainer);
+    }
+    
+    // 增强AI Power选择器
+    const slideCountSelect = document.getElementById('slide-count-select');
+    if (slideCountSelect) {
+        // 创建自定义选择器
+        const powerLevelContainer = document.createElement('div');
+        powerLevelContainer.className = 'power-level-slider';
+        
+        // 创建滑块
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.min = '1';
+        slider.max = '4';
+        slider.value = '2'; // 默认值
+        slider.className = 'power-slider';
+        
+        // 创建滑块标签
+        const sliderLabels = document.createElement('div');
+        sliderLabels.className = 'slider-labels';
+        
+        const labels = ['5-10 Power', '10-15 Power', '15-20 Power', '20+ Power'];
+        labels.forEach((label, index) => {
+            const labelElement = document.createElement('span');
+            labelElement.textContent = label;
+            labelElement.className = 'slider-label';
+            labelElement.setAttribute('data-value', index + 1);
+            sliderLabels.appendChild(labelElement);
+        });
+        
+        // 更新选择器值
+        slider.addEventListener('input', () => {
+            const value = parseInt(slider.value);
+            slideCountSelect.value = labels[value - 1];
+            
+            // 更新标签激活状态
+            document.querySelectorAll('.slider-label').forEach(label => {
+                if (parseInt(label.getAttribute('data-value')) === value) {
+                    label.classList.add('active');
+                } else {
+                    label.classList.remove('active');
+                }
+            });
+        });
+        
+        // 点击标签更新滑块
+        sliderLabels.querySelectorAll('.slider-label').forEach(label => {
+            label.addEventListener('click', () => {
+                const value = label.getAttribute('data-value');
+                slider.value = value;
+                slideCountSelect.value = labels[value - 1];
+                
+                // 更新标签激活状态
+                document.querySelectorAll('.slider-label').forEach(l => {
+                    if (l === label) {
+                        l.classList.add('active');
+                    } else {
+                        l.classList.remove('active');
+                    }
+                });
+            });
+        });
+        
+        // 初始化激活状态
+        sliderLabels.querySelector('[data-value="2"]').classList.add('active');
+        
+        powerLevelContainer.appendChild(slider);
+        powerLevelContainer.appendChild(sliderLabels);
+        
+        // 隐藏原始选择器并添加自定义选择器
+        slideCountSelect.style.display = 'none';
+        slideCountSelect.parentNode.appendChild(powerLevelContainer);
     }
 
     // 颜色选择器

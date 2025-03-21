@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         window.config = {
-            apiBaseUrl: 'http://localhost:8080',
+            apiBaseUrl: 'http://localhost:3001',
             googleAuthUrl: 'http://localhost:8080/oauth2/authorization/google'
         };
     </script>
@@ -38,7 +38,7 @@
     <main>
         <section id="hero" class="hero-section">
             <div class="hero-content">
-                <h1 class="glitch-text" data-text="AI-Driven PPT Generation">AI-Driven PPT Generation</h1>
+                <h1 class="glitch-text" data-text="AI-Driven Slides Generation">AI-Driven Slides Generation</h1>
                 <p>Just input your ideas, and our AI will create professional presentations for you</p>
                 <div class="cta-container">
                     <button class="cta-button">Get Started <i class="fas fa-arrow-right"></i></button>
@@ -61,42 +61,29 @@
                 <h2>Start Creating Your Presentation</h2>
                 <div class="generator-box">
                     <div class="input-container">
-                        <textarea placeholder="Describe your presentation content, for example: 'Create a 10-page presentation about AI applications in healthcare, including data charts and case studies'"></textarea>
+                        <textarea id="presentation-prompt" placeholder="把你的文字内容交给slidesai，立刻生成精美展示页"></textarea>
                         <div class="options">
                             <div class="option">
-                                <label>Style</label>
-                                <select>
-                                    <option>Professional Business</option>
-                                    <option>Creative Design</option>
-                                    <option>Academic Research</option>
-                                    <option>Tech-Focused</option>
-                                    <option>Minimalist Modern</option>
+                                <label>风格</label>
+                                <input type="text" id="style-input" placeholder="例如：赛伯朋克、甜蜜美满、海洋潮流..." />
+                            </div>
+                            <div class="option">
+                                <label>AI POWER</label>
+                                <select id="slide-count-select">
+                                    <option>5-10 Power</option>
+                                    <option>10-15 Power</option>
+                                    <option>15-20 Power</option>
+                                    <option>20+ Power</option>
                                 </select>
                             </div>
                             <div class="option">
-                                <label>Number of Slides</label>
-                                <select>
-                                    <option>5-10 slides</option>
-                                    <option>10-15 slides</option>
-                                    <option>15-20 slides</option>
-                                    <option>20+ slides</option>
-                                </select>
-                            </div>
-                            <div class="option">
-                                <label>Color Theme</label>
-                                <div class="color-options">
-                                    <span class="color-option" style="background-color: #3498db;"></span>
-                                    <span class="color-option" style="background-color: #2ecc71;"></span>
-                                    <span class="color-option" style="background-color: #e74c3c;"></span>
-                                    <span class="color-option" style="background-color: #9b59b6;"></span>
-                                    <span class="color-option" style="background-color: #f1c40f;"></span>
-                                    <span class="color-option custom-color">+</span>
-                                </div>
+                                <label>颜色主题</label>
+                                <input type="text" id="color-theme-input" placeholder="例如：蓝色系、红黑配色、柔和绿色..." />
                             </div>
                         </div>
-                        <button class="generate-btn">
-                            <span class="default-text">Generate Presentation</span>
-                            <span class="loading-text"><i class="fas fa-spinner fa-spin"></i> AI is creating...</span>
+                        <button id="generate-btn" class="generate-btn">
+                            <span class="default-text">生成演示文稿</span>
+                            <span class="loading-text"><i class="fas fa-spinner fa-spin"></i> AI 正在创建...</span>
                         </button>
                     </div>
                 </div>
@@ -322,5 +309,6 @@
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
+    <script src="claude-api.js"></script>
 </body>
 </html> 

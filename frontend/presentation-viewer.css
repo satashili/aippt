@@ -1,0 +1,124 @@
+/* 演示文稿查看器样式 */
+.presentation-controls {
+    background: var(--darker-bg);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 80px;
+    z-index: 100;
+}
+
+.presentation-title h1 {
+    margin: 0;
+    font-size: 24px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.presentation-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.action-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--light-text);
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.action-btn i {
+    font-size: 16px;
+}
+
+.presentation-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.slide {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.slide h1 {
+    font-size: 36px;
+    margin-top: 0;
+    color: #222;
+}
+
+.slide h2 {
+    font-size: 28px;
+    color: #333;
+}
+
+.slide p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.slide ul, .slide ol {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.slide img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 8px;
+}
+
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 0;
+    color: var(--gray-text);
+}
+
+.loading-indicator i {
+    font-size: 40px;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+/* 打印样式 */
+@media print {
+    header, footer, .presentation-controls {
+        display: none;
+    }
+    
+    .slide {
+        page-break-after: always;
+        box-shadow: none;
+        border: 1px solid #eee;
+    }
+    
+    body {
+        background: white;
+    }
+} 
