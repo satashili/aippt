@@ -110,13 +110,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 throw new UserAlreadyExistsException("邮箱已被注册");
             }
         }
-        
+
+        System.out.println(1111);
         // 用户不存在，创建新用户
         String userId = UUID.randomUUID().toString();
         LocalDateTime now = LocalDateTime.now();
         
         // 加密密码
-        String encodedPassword = PasswordUtils.processPassword(password);
+        String encodedPassword = PasswordUtils.encodePassword(password);
+        System.out.println("Register时的加密密码：" + encodedPassword);
         
         // 创建新用户
         User newUser = User.builder()
@@ -446,7 +448,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getEmail, email);
         User user = this.getOne(queryWrapper);
-        
+
         // 检查用户是否存在
         if (user == null) {
             log.warn("登录失败: 用户不存在 {}", email);
@@ -467,7 +469,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         
         // 验证密码
         try {
+            log.info("验证用户密码: {}", email);
+            System.out.println(222);
+            System.out.println(user);
+            System.out.println("加密 " + user.getPassword());
+
             PasswordUtils.validatePassword(password, user.getPassword());
+
+            log.info("密码验证成功: {}", email);
         } catch (InvalidPasswordException e) {
             log.warn("登录失败: 密码错误 {}", email);
             throw e; // 重新抛出异常

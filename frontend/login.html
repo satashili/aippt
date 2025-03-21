@@ -382,11 +382,15 @@
                     console.log('==================== Received Response ====================');
                     console.log('Response Status:', response.status);
                     
-                    if (!response.ok) {
-                        throw new Error(`Request failed with status code: ${response.status}`);
-                    }
-                    
-                    return response.json();
+                    // 无论是成功还是失败，都尝试解析为JSON
+                    return response.json().then(data => {
+                        if (!response.ok) {
+                            // 请求失败，但我们已经有了响应数据
+                            data.status = response.status;
+                            throw data;
+                        }
+                        return data;
+                    });
                 })
                 .then(data => {
                     console.log('Response Data:', JSON.stringify(data, null, 2));
@@ -398,7 +402,7 @@
                         window.location.href = 'index.html';
                     } else {
                         // Display error message
-                        showError(data.message || '登录失败，请检查您的凭据');
+                        showError(data.message || 'Login failed, please check your network connection and try again');
                         
                         // Reset button
                         submitBtn.textContent = 'Log in';
@@ -410,8 +414,19 @@
                     console.error('Error Details:', error);
                     console.error('=====================================================');
                     
-                    // Display error message
-                    showError('Login failed, please check your credentials or network connection');
+                    // 检查是否是我们从response.json()抛出的错误对象
+                    if (error && error.message) {
+                        showError(error.message);
+                        
+                        // 如果是邮箱验证错误，保存用户邮箱以便后续重发验证邮件
+                        if (error.errorType === 'EMAIL_NOT_VERIFIED' && error.needsVerification) {
+                            const verificationEmail = error.email || email;
+                            localStorage.setItem('pendingVerificationEmail', verificationEmail);
+                        }
+                    } else {
+                        // 其他类型的错误
+                        showError('Login failed, please check your network connection and try again');
+                    }
                     
                     // Reset button
                     submitBtn.textContent = 'Log in';
@@ -434,7 +449,11 @@
                 errorMessage.textContent = message;
                 
                 // 检查是否需要添加"重新发送验证邮件"链接
-                if (message.includes('verify your email') || message.includes('verify') || message.includes('verification')) {
+                if (message.toLowerCase().includes('验证') || 
+                    message.toLowerCase().includes('verify') || 
+                    message.toLowerCase().includes('verification') || 
+                    message.toLowerCase().includes('email') && message.toLowerCase().includes('confirm')) {
+                    
                     // 在错误消息下方添加"重新发送验证邮件"链接
                     if (!document.getElementById('resend-verification-link')) {
                         const resendLink = document.createElement('p');
@@ -446,9 +465,12 @@
                         document.getElementById('resend-verification-link').addEventListener('click', function(e) {
                             e.preventDefault();
                             
-                            const email = document.getElementById('email').value;
+                            // 优先使用存储的验证邮箱，否则使用输入框中的邮箱
+                            const storedEmail = localStorage.getItem('pendingVerificationEmail');
+                            const email = storedEmail || document.getElementById('email').value;
+                            
                             if (!email) {
-                                alert('Please enter your email address first.');
+                                alert('Please enter your email address first');
                                 return;
                             }
                             
@@ -471,6 +493,9 @@
                                     errorContainer.style.backgroundColor = 'rgba(46, 204, 113, 0.1)';
                                     errorContainer.style.borderColor = 'rgba(46, 204, 113, 0.3)';
                                     errorMessage.textContent = 'Verification email has been sent. Please check your inbox.';
+                                    
+                                    // 移除存储的邮箱
+                                    localStorage.removeItem('pendingVerificationEmail');
                                     
                                     // 移除重发链接
                                     resendLink.parentNode.remove();
@@ -497,10 +522,10 @@
                     }
                 }
                 
-                // 自动隐藏错误信息（5秒后）
-                setTimeout(function() {
-                    errorContainer.style.display = 'none';
-                }, 5000);
+                // 不自动隐藏错误信息，保持显示直到用户修改表单
+                // setTimeout(function() {
+                //     errorContainer.style.display = 'none';
+                // }, 5000);
             }
             
             // Check if already logged in

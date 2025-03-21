@@ -19,7 +19,7 @@ public class User {
     private String email;
     private String picture;
     
-    @TableField(value = "password", select = false)
+    @TableField(value = "password")
     private String password;
     
     @TableField("given_name")

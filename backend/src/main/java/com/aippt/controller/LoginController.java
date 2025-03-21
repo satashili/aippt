@@ -3,6 +3,7 @@ package com.aippt.controller;
 import com.aippt.dto.auth.LoginRequest;
 import com.aippt.entity.User;
 import com.aippt.exception.InvalidPasswordException;
+import com.aippt.exception.InvalidTokenException;
 import com.aippt.exception.UserNotFoundException;
 import com.aippt.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -107,6 +108,20 @@ public class LoginController {
             response.put("success", false);
             response.put("errorType", "INVALID_PASSWORD");
             response.put("message", e.getMessage());
+            
+            return ResponseEntity.badRequest().body(response);
+            
+        } catch (InvalidTokenException e) {
+            logger.warn("==================== 登录失败: 邮箱未验证 ====================");
+            logger.warn("邮箱: {}", loginRequest.getEmail());
+            logger.warn("错误信息: {}", e.getMessage());
+            logger.warn("======================================================");
+            
+            response.put("success", false);
+            response.put("errorType", "EMAIL_NOT_VERIFIED");
+            response.put("message", e.getMessage());
+            response.put("needsVerification", true);
+            response.put("email", loginRequest.getEmail());
             
             return ResponseEntity.badRequest().body(response);
             

@@ -20,6 +20,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*", allowedHeaders = "*") // 允许跨域请求
 public class EmailVerificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailVerificationController.class);
