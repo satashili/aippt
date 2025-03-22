@@ -1,4 +1,4 @@
-package com.aippt.exception;
+package com.aippt.exception.payment;
 
 /**
  * Payment processing exception

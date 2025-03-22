@@ -1,8 +1,8 @@
 package com.aippt.service;
 
 import com.aippt.entity.User;
-import com.aippt.exception.InvalidPasswordException;
-import com.aippt.exception.UserNotFoundException;
+import com.aippt.exception.user.UserNotFoundException;
+import com.aippt.exception.user.InvalidPasswordException;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

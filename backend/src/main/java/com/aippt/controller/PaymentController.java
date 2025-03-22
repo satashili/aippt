@@ -4,7 +4,7 @@ import com.aippt.dto.payment.CreatePaymentIntentRequest;
 import com.aippt.dto.payment.CreatePaymentIntentResponse;
 import com.aippt.dto.payment.PaymentDetailsResponse;
 import com.aippt.entity.Payment;
-import com.aippt.exception.PaymentProcessingException;
+import com.aippt.exception.payment.PaymentProcessingException;
 import com.aippt.service.PaymentService;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;

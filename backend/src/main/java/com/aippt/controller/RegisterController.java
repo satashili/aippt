@@ -2,6 +2,7 @@ package com.aippt.controller;
 
 import com.aippt.dto.auth.RegisterRequest;
 import com.aippt.entity.User;
+import com.aippt.exception.user.UserAlreadyExistsException;
 import com.aippt.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class RegisterController {
 
         Map<String, Object> response = new HashMap<>();
 
-        // 检查验证错误
+        // 1. 验证请求数据
         if (bindingResult.hasErrors()) {
             logger.info("==================== 验证错误 ====================");
             Map<String, String> errors = new HashMap<>();
@@ -45,6 +46,7 @@ public class RegisterController {
             return ResponseEntity.badRequest().body(response);
         }
 
+        // 2. 注册用户
         try {
             User user = userService.register(
                 registerRequest.getEmail(),
@@ -68,7 +70,7 @@ public class RegisterController {
             
             // 处理不同类型的错误
             String errorMessage = e.getMessage();
-            if (e instanceof com.aippt.exception.UserAlreadyExistsException) {
+            if (e instanceof UserAlreadyExistsException) {
                 errorMessage = "该邮箱已被注册，请直接登录或使用其他邮箱";
                 response.put("errorType", "USER_EXISTS");
             } else if (errorMessage == null || errorMessage.trim().isEmpty()) {

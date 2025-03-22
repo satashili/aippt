@@ -1,4 +1,4 @@
-package com.aippt.exception;
+package com.aippt.exception.user;
 
 /**
  * 用户已存在异常，当尝试注册已有邮箱时抛出

@@ -1,4 +1,4 @@
-package com.aippt.exception;
+package com.aippt.exception.auth;
 
 /**
  * 当验证token已过期时抛出此异常

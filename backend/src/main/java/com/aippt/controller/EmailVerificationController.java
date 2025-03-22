@@ -1,8 +1,8 @@
 package com.aippt.controller;
 
-import com.aippt.exception.InvalidTokenException;
-import com.aippt.exception.TokenExpiredException;
-import com.aippt.exception.UserNotFoundException;
+import com.aippt.exception.auth.InvalidTokenException;
+import com.aippt.exception.auth.TokenExpiredException;
+import com.aippt.exception.user.UserNotFoundException;
 import com.aippt.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

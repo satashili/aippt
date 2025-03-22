@@ -1,4 +1,4 @@
-package com.aippt.exception;
+package com.aippt.exception.auth;
 
 /**
  * 不支持的认证类型异常

@@ -1,5 +1,13 @@
-package com.aippt.exception;
+package com.aippt.exception.common;
 
+import com.aippt.exception.auth.InvalidTokenException;
+import com.aippt.exception.auth.OAuthProcessingException;
+import com.aippt.exception.auth.TokenExpiredException;
+import com.aippt.exception.payment.PaymentProcessingException;
+import com.aippt.exception.user.InvalidPasswordException;
+import com.aippt.exception.user.UserAlreadyExistsException;
+import com.aippt.exception.user.UserException;
+import com.aippt.exception.user.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

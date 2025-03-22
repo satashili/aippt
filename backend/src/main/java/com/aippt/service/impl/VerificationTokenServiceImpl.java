@@ -1,8 +1,8 @@
 package com.aippt.service.impl;
 
 import com.aippt.entity.VerificationToken;
-import com.aippt.exception.InvalidTokenException;
-import com.aippt.exception.TokenExpiredException;
+import com.aippt.exception.auth.InvalidTokenException;
+import com.aippt.exception.auth.TokenExpiredException;
 import com.aippt.mapper.VerificationTokenMapper;
 import com.aippt.service.VerificationTokenService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

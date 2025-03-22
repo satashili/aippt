@@ -1,4 +1,4 @@
-package com.aippt.exception;
+package com.aippt.exception.auth;
 
 /**
  * 当验证token无效时抛出此异常

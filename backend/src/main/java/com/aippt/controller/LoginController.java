@@ -2,9 +2,9 @@ package com.aippt.controller;
 
 import com.aippt.dto.auth.LoginRequest;
 import com.aippt.entity.User;
-import com.aippt.exception.InvalidPasswordException;
-import com.aippt.exception.InvalidTokenException;
-import com.aippt.exception.UserNotFoundException;
+import com.aippt.exception.user.InvalidPasswordException;
+import com.aippt.exception.auth.InvalidTokenException;
+import com.aippt.exception.user.UserNotFoundException;
 import com.aippt.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

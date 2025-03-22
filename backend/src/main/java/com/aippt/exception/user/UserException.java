@@ -1,4 +1,4 @@
-package com.aippt.exception;
+package com.aippt.exception.user;
 
 /**
  * 用户相关操作的基础异常类

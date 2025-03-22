@@ -1,7 +1,7 @@
 package com.aippt.service.impl;
 
 import com.aippt.entity.User;
-import com.aippt.exception.UserNotFoundException;
+import com.aippt.exception.user.UserNotFoundException;
 import com.aippt.service.MembershipService;
 import com.aippt.service.UserService;
 import lombok.extern.slf4j.Slf4j;

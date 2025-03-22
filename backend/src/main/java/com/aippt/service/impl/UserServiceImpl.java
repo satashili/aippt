@@ -2,12 +2,12 @@ package com.aippt.service.impl;
 
 import com.aippt.entity.User;
 import com.aippt.entity.VerificationToken;
-import com.aippt.exception.OAuthProcessingException;
-import com.aippt.exception.UserAlreadyExistsException;
-import com.aippt.exception.UserNotFoundException;
-import com.aippt.exception.UnsupportedAuthTypeException;
-import com.aippt.exception.InvalidPasswordException;
-import com.aippt.exception.InvalidTokenException;
+import com.aippt.exception.auth.OAuthProcessingException;
+import com.aippt.exception.user.UserAlreadyExistsException;
+import com.aippt.exception.user.UserNotFoundException;
+import com.aippt.exception.auth.UnsupportedAuthTypeException;
+import com.aippt.exception.user.InvalidPasswordException;
+import com.aippt.exception.auth.InvalidTokenException;
 import com.aippt.mapper.UserMapper;
 import com.aippt.service.EmailService;
 import com.aippt.service.UserService;

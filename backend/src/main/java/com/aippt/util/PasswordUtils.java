@@ -1,6 +1,6 @@
 package com.aippt.util;
 
-import com.aippt.exception.InvalidPasswordException;
+import com.aippt.exception.user.InvalidPasswordException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.slf4j.Logger;

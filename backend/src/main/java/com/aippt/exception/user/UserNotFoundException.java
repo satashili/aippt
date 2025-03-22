@@ -1,4 +1,4 @@
-package com.aippt.exception;
+package com.aippt.exception.user;
 
 /**
  * 用户不存在异常，当查询的用户ID不存在时抛出

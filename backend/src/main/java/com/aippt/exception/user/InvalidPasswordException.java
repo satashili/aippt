@@ -1,4 +1,4 @@
-package com.aippt.exception;
+package com.aippt.exception.user;
 
 /**
  * 密码无效异常，当用户密码验证失败时抛出
