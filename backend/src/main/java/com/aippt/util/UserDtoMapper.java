@@ -1,6 +1,6 @@
 package com.aippt.util;
 
-import com.aippt.dto.UserDTO;
+import com.aippt.dto.user.UserDTO;
 import com.aippt.entity.User;
 import org.springframework.stereotype.Component;
 

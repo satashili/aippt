@@ -1,6 +1,6 @@
 package com.aippt.controller;
 
-import com.aippt.dto.RegisterRequest;
+import com.aippt.dto.auth.RegisterRequest;
 import com.aippt.entity.User;
 import com.aippt.service.UserService;
 import jakarta.validation.Valid;

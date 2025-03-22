@@ -1,4 +1,4 @@
-package com.aippt.dto;
+package com.aippt.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

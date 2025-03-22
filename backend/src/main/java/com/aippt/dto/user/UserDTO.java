@@ -1,4 +1,4 @@
-package com.aippt.dto;
+package com.aippt.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
