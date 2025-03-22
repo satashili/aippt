@@ -111,15 +111,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
         }
 
-        System.out.println(1111);
         // 用户不存在，创建新用户
         String userId = UUID.randomUUID().toString();
         LocalDateTime now = LocalDateTime.now();
         
         // 加密密码
         String encodedPassword = PasswordUtils.encodePassword(password);
-        System.out.println("Register时的加密密码：" + encodedPassword);
-        
+
         // 创建新用户
         User newUser = User.builder()
                 .id(userId)
@@ -470,9 +468,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 验证密码
         try {
             log.info("验证用户密码: {}", email);
-            System.out.println(222);
-            System.out.println(user);
-            System.out.println("加密 " + user.getPassword());
 
             PasswordUtils.validatePassword(password, user.getPassword());
 
