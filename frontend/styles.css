@@ -1468,4 +1468,70 @@ footer {
 .generate-btn.loading {
     background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
     pointer-events: none;
+}
+
+/* 生成器部分的移动端适配 */
+@media (max-width: 768px) {
+    .generator-box {
+        padding: 20px;
+    }
+    
+    .input-container {
+        padding: 15px;
+    }
+    
+    #presentation-prompt {
+        min-height: 120px;
+    }
+    
+    .options {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .option {
+        width: 100%;
+    }
+    
+    .preset-tags, .color-presets {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    
+    .preset-tag {
+        font-size: 12px;
+        padding: 5px 10px;
+        margin-right: 0;
+    }
+    
+    .color-preset-option {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+@media (max-width: 576px) {
+    .generator-section {
+        padding: 60px 15px;
+    }
+    
+    .generator-box {
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    .input-container {
+        padding: 10px;
+    }
+    
+    .generate-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    
+    .generator-section h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
 } 
