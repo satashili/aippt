@@ -3,6 +3,7 @@ package com.aippt.service;
 import com.aippt.dto.payment.CreatePaymentIntentRequest;
 import com.aippt.dto.payment.CreatePaymentIntentResponse;
 import com.aippt.dto.payment.PaymentDetailsResponse;
+import com.aippt.entity.Payment;
 
 public interface PaymentService {
 
@@ -38,4 +39,6 @@ public interface PaymentService {
      * @return 是否取消成功
      */
     boolean cancelSubscription(String userId);
+
+    Payment findByPaymentIntentId(String paymentIntentId);
 } 

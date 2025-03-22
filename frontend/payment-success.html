@@ -187,9 +187,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-            // Get plan type from URL
+            // 获取URL参数
             const urlParams = new URLSearchParams(window.location.search);
             const plan = urlParams.get('plan');
+            const paymentIntentId = urlParams.get('payment_intent');
+            
+            // 如果有支付意向ID，调用处理成功API
+            if (paymentIntentId) {
+                try {
+                    const processResponse = await fetch('/api/payment/process-success', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentIntentId })
+                    });
+                    
+                    if (!processResponse.ok) {
+                        console.error('支付处理失败，但会继续显示支付详情');
+                    }
+                } catch (err) {
+                    console.error('处理支付成功时出错:', err);
+                    // 错误处理，但仍继续显示页面
+                }
+            }
+            
+            // Get plan type from URL
             const planType = document.getElementById('plan-type');
             
             if (plan === 'monthly') {

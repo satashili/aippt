@@ -3,18 +3,26 @@ package com.aippt.controller;
 import com.aippt.dto.payment.CreatePaymentIntentRequest;
 import com.aippt.dto.payment.CreatePaymentIntentResponse;
 import com.aippt.dto.payment.PaymentDetailsResponse;
+import com.aippt.entity.Payment;
 import com.aippt.exception.PaymentProcessingException;
 import com.aippt.service.PaymentService;
+import com.stripe.model.Event;
+import com.stripe.model.PaymentIntent;
+import com.stripe.net.Webhook;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -24,8 +32,14 @@ public class PaymentController {
     @Value("${stripe.publishableKey}")
     private String stripePublishableKey;
     
+    @Value("${stripe.webhook.secret}")
+    private String webhookSecret;
+    
     @Autowired
     private PaymentService paymentService;
+    
+    // 可以使用内存缓存或数据库存储已处理的事件ID
+    private final Set<String> processedEvents = Collections.synchronizedSet(new HashSet<>());
     
     /**
      * Get Stripe configuration information
@@ -76,16 +90,43 @@ public class PaymentController {
     @PostMapping("/webhook")
     public ResponseEntity<String> webhook(@RequestBody String payload, 
                                           @RequestHeader("Stripe-Signature") String signature) {
-        log.info("Received Stripe webhook callback");
+        log.info("收到Stripe webhook回调");
         
         try {
-            // Webhook handling logic here...
-            // Verify signature, process event types, etc.
+            Event event = Webhook.constructEvent(payload, signature, webhookSecret);
             
+            // 确保幂等性处理 - 检查是否已处理过此事件
+            String eventId = event.getId();
+            if (hasProcessedEvent(eventId)) {
+                return ResponseEntity.ok("Event already processed");
+            }
+            
+            switch (event.getType()) {
+                case "payment_intent.succeeded":
+                    PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer().getObject().get();
+                    handlePaymentIntentSucceeded(paymentIntent);
+                    break;
+                // 添加其他事件类型...
+            }
+            
+            // 记录已处理的事件
+            markEventAsProcessed(eventId);
             return ResponseEntity.ok("Webhook handled successfully");
         } catch (Exception e) {
-            log.error("Error processing webhook callback", e);
-            return ResponseEntity.badRequest().body("Webhook Error: " + e.getMessage());
+            log.error("处理webhook回调出错", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("Webhook Error: " + e.getMessage());
+        }
+    }
+    
+    private void handlePaymentIntentSucceeded(PaymentIntent paymentIntent) {
+        // 通过元数据或查询获取用户ID
+        String userId = getUserIdFromPaymentIntent(paymentIntent);
+        if (userId != null) {
+            paymentService.processPaymentSuccess(paymentIntent.getId(), userId);
+        } else {
+            // 记录无法关联用户的支付
+            log.warn("无法关联用户ID的支付成功: {}", paymentIntent.getId());
         }
     }
     
@@ -195,5 +236,46 @@ public class PaymentController {
             error.put("error", "Failed to cancel subscription: " + e.getMessage());
             return ResponseEntity.badRequest().body(error);
         }
+    }
+    
+    /**
+     * 检查事件是否已处理
+     */
+    private boolean hasProcessedEvent(String eventId) {
+        return processedEvents.contains(eventId);
+    }
+    
+    /**
+     * 标记事件已处理
+     */
+    private void markEventAsProcessed(String eventId) {
+        processedEvents.add(eventId);
+        // 如果是生产环境，应该持久化这个记录到数据库
+        // 并可能设置过期时间或定期清理机制
+    }
+    
+    /**
+     * 从PaymentIntent中获取用户ID
+     * 可以从metadata或通过paymentIntentId查询数据库
+     */
+    private String getUserIdFromPaymentIntent(PaymentIntent paymentIntent) {
+        // 方法1：从metadata中获取
+        if (paymentIntent.getMetadata() != null && paymentIntent.getMetadata().containsKey("userId")) {
+            return paymentIntent.getMetadata().get("userId");
+        }
+        
+        // 方法2：通过paymentIntentId查询支付记录获取userId
+        try {
+            // 查询支付记录
+            String paymentIntentId = paymentIntent.getId();
+            Payment payment = paymentService.findByPaymentIntentId(paymentIntentId);
+            if (payment != null && payment.getUserId() != null) {
+                return payment.getUserId();
+            }
+        } catch (Exception e) {
+            log.error("Error getting userId from payment record", e);
+        }
+        
+        return null;
     }
 } 

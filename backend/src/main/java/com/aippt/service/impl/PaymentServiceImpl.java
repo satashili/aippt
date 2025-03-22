@@ -113,7 +113,7 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("Processing payment success callback: paymentIntentId={}, userId={}", paymentIntentId, userId);
         
         try {
-            // Query payment record
+            // 查询支付记录
             LambdaQueryWrapper<Payment> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(Payment::getPaymentIntentId, paymentIntentId);
             Payment payment = paymentMapper.selectOne(queryWrapper);
@@ -122,6 +122,14 @@ public class PaymentServiceImpl implements PaymentService {
                 log.error("Payment record not found: {}", paymentIntentId);
                 return false;
             }
+            
+            // 检查是否已处理，实现幂等性
+            if ("SUCCEEDED".equals(payment.getStatus()) && userId.equals(payment.getUserId())) {
+                log.info("支付已处理，避免重复操作: {}", paymentIntentId);
+                return true;
+            }
+            
+            // 继续原有逻辑...
             
             // Update payment status
             payment.setUserId(userId);
@@ -241,5 +249,12 @@ public class PaymentServiceImpl implements PaymentService {
         
         log.info("User subscription cancelled: {}", userId);
         return true;
+    }
+
+    @Override
+    public Payment findByPaymentIntentId(String paymentIntentId) {
+        LambdaQueryWrapper<Payment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Payment::getPaymentIntentId, paymentIntentId);
+        return paymentMapper.selectOne(queryWrapper);
     }
 } 
