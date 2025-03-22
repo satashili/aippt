@@ -340,12 +340,6 @@
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 
-                // Print form data (in development environment only)
-                console.log('==================== Form Data ====================');
-                console.log('Email:', email);
-                console.log('Password length:', password.length);
-                console.log('=====================================================');
-                
                 // Simple form validation
                 if (!email || !password) {
                     console.log('Form validation failed: Please fill in all required fields');
@@ -364,11 +358,6 @@
                     password: password
                 };
                 
-                console.log('==================== Sending Request Data ====================');
-                console.log('Request URL:', `${window.config.apiBaseUrl}/api/auth/login`);
-                console.log('Request Data:', JSON.stringify(requestData, null, 2));
-                console.log('=====================================================');
-                
                 // Send login request
                 fetch(`${window.config.apiBaseUrl}/api/auth/login`, {
                     method: 'POST',
@@ -379,9 +368,6 @@
                     credentials: 'include'
                 })
                 .then(response => {
-                    console.log('==================== Received Response ====================');
-                    console.log('Response Status:', response.status);
-                    
                     // 无论是成功还是失败，都尝试解析为JSON
                     return response.json().then(data => {
                         if (!response.ok) {
@@ -393,13 +379,13 @@
                     });
                 })
                 .then(data => {
-                    console.log('Response Data:', JSON.stringify(data, null, 2));
-                    console.log('=====================================================');
-                    
                     if (data.success) {
-                        // Login successful, redirect to homepage or dashboard
-                        console.log('Login successful, redirecting to homepage');
-                        window.location.href = 'index.html';
+                        // 先存储登录状态到localStorage
+                        localStorage.setItem('userLoggedIn', 'true');
+                        localStorage.setItem('loginTime', new Date().getTime());
+                        
+                        // 添加时间戳参数，确保页面完全重新加载
+                        window.location.href = 'index.html?refresh=' + new Date().getTime();
                     } else {
                         // Display error message
                         showError(data.message || 'Login failed, please check your network connection and try again');
@@ -548,6 +534,62 @@
                 console.log('User not logged in or error checking login status:', error);
                 // User not logged in, continue showing login page
             });
+        });
+
+        // 专门用于解决邮箱登录状态不显示的问题
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否刚刚登录过
+            const justLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const loginTime = localStorage.getItem('loginTime');
+            const currentTime = new Date().getTime();
+            
+            // 如果是刚登录的（5分钟内），而且界面上没有显示用户信息
+            if (justLoggedIn && loginTime && (currentTime - loginTime < 300000)) {
+                console.log('检测到最近登录，正在重新获取用户信息...');
+                
+                // 尝试再次获取用户信息
+                fetch(`${window.config.apiBaseUrl}/user`, {
+                    credentials: 'include',
+                    // 添加缓存控制头
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                })
+                .then(response => {
+                    console.log('用户信息API响应:', response.status);
+                    if (!response.ok) throw new Error('获取用户信息失败');
+                    return response.json();
+                })
+                .then(user => {
+                    console.log('获取到用户信息:', user);
+                    if (user && user.id) {
+                        // 清除登录标记
+                        localStorage.removeItem('userLoggedIn');
+                        localStorage.removeItem('loginTime');
+                        
+                        // 更新界面显示
+                        document.querySelector('.auth-buttons').innerHTML = `
+                            <div class="user-container" style="display:flex;align-items:center;gap:10px">
+                                <img class="user-avatar" src="${user.picture || 'images/default-avatar.png'}" alt="头像" 
+                                     style="width:36px;height:36px;border-radius:50%">
+                                <div class="user-details" style="display:flex;flex-direction:column">
+                                    <span class="user-name" style="font-weight:600;color:#fff">${user.name || '用户'}</span>
+                                    <span class="user-email" style="font-size:12px;color:rgba(255,255,255,0.7)">${user.email || ''}</span>
+                                </div>
+                                <button onclick="logout()" class="login-btn">退出</button>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(err => {
+                    console.error('重新获取用户信息失败:', err);
+                    // 清除登录标记，避免无限循环
+                    localStorage.removeItem('userLoggedIn');
+                    localStorage.removeItem('loginTime');
+                });
+            }
         });
     </script>
 </body>
