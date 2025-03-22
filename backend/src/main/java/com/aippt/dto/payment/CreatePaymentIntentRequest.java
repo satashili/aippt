@@ -24,5 +24,6 @@ public class CreatePaymentIntentRequest {
     /**
      * Currency, default is USD
      */
+    @Builder.Default
     private String currency = "usd";
 } 

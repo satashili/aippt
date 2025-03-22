@@ -4,17 +4,17 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/aippt?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false
-    username: root
-    password: 12345
+    url: ${DB_URL:jdbc:mysql://localhost:3306/aippt?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
 
   security:
     oauth2:
       client:
         registration: # 这里的配置会生成 /oauth2/authorization/google
           google:
-            client-id:
-            client-secret:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
             redirect-uri: http://localhost:8080/login/oauth2/code/google
             
             scope:
@@ -31,8 +31,8 @@ spring:
   mail:
     host: smtp.gmail.com         # Gmail 的 SMTP 服务器地址
     port: 587                    # Gmail 的 SMTP 端口
-    username: aislidesgreat@gmail.com  # 你的 Gmail 邮箱
-    password:   # Gmail 的应用专用密码（不是邮箱密码）
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}  # Gmail 的应用专用密码（不是邮箱密码）
     properties:
       mail:
         smtp:
@@ -71,3 +71,9 @@ app:
     verification:
       expiration: 10      # 10 分钟
       base-url: http://localhost:3000/verify-email  # 验证页面URL
+
+stripe:
+  apiKey: ${STRIPE_API_KEY:} # 替换为实际的Stripe密钥
+  publishableKey: ${STRIPE_PUBLISHABLE_KEY:} # 替换为实际的公钥
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET:} # 替换为实际的Webhook签名密钥

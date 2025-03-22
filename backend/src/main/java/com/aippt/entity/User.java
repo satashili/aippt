@@ -50,5 +50,6 @@ public class User {
     private String externalId;
 
     @TableLogic
+    @Builder.Default
     private Integer deleted = 0;
 } 
