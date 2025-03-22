@@ -1445,6 +1445,9 @@ footer {
 
 .generate-btn .loading-text {
     display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .generate-btn .default-text {

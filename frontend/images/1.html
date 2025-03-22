@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AISlides - AI-Driven Presentation Generation Tool</title>
+    <style>
+        :root {
+            --primary: #0066ff;
+            --secondary: #00ccff;
+            --accent: #7000ff;
+            --dark: #121220;
+            --light: #f0f5ff;
+            --text: #e0e0ff;
+            --text-dark: #333344;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            overflow-y: auto;
+            background: linear-gradient(135deg, #121220 0%, #1a1a30 100%);
+        }
+        
+        body.light-theme {
+            background-color: var(--light);
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f0f5ff 0%, #e6eeff 100%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            overflow-y: visible;
+        }
+        
+        header {
+            position: relative;
+            margin-bottom: 4rem;
+            padding: 2rem 0;
+            overflow: visible;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--text);
+            opacity: 0.8;
+        }
+        
+        .glowing-circle {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(112, 0, 255, 0.1) 0%, rgba(0, 102, 255, 0.05) 70%, rgba(0, 0, 0, 0) 100%);
+            animation: pulse 8s infinite alternate;
+            filter: blur(20px);
+            z-index: 1;
+        }
+        
+        .circle-1 {
+            top: -100px;
+            right: -50px;
+        }
+        
+        .circle-2 {
+            bottom: -150px;
+            left: 50px;
+            animation-delay: 2s;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+            position: relative;
+        }
+        
+        .feature-card {
+            background: rgba(18, 18, 32, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: visible;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 102, 255, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.3);
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .feature-description {
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .business-plan {
+            margin-top: 5rem;
+            padding: 3rem 2rem;
+            background: rgba(18, 18, 32, 0.6);
+            border-radius: 16px;
+            position: relative;
+        }
+        
+        .business-plan-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .business-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+        
+        .flow-step {
+            background: rgba(25, 25, 40, 0.8);
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            width: 220px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        
+        .flow-step:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 102, 255, 0.2);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .flow-arrow {
+            position: absolute;
+            top: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 1;
+        }
+        
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid var(--secondary);
+            border-right: 2px solid var(--secondary);
+            transform: rotate(45deg);
+        }
+        
+        .glow-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.1), transparent 70%);
+            filter: blur(30px);
+            z-index: 0;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        .floating-element {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .business-flow {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .flow-arrow {
+                display: none;
+            }
+            
+            .flow-step {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 1.5rem;
+            }
+            
+            .algorithm-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .business-plan-title,
+            .ai-algorithm-title {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .feature-card,
+            .algorithm-card {
+                padding: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Custom animated icon for each feature */
+        .icon-content {
+            position: relative;
+            width: 30px;
+            height: 30px;
+        }
+        
+        .ai-icon .icon-content {
+            border: 2px solid white;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .ai-icon .icon-content::before, 
+        .ai-icon .icon-content::after {
+            content: '';
+            position: absolute;
+            background: white;
+            animation: aiProcess 3s infinite;
+        }
+        
+        .ai-icon .icon-content::before {
+            width: 70%;
+            height: 2px;
+            top: 40%;
+            left: 15%;
+        }
+        
+        .ai-icon .icon-content::after {
+            width: 50%;
+            height: 2px;
+            top: 60%;
+            left: 25%;
+        }
+        
+        @keyframes aiProcess {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+        
+        .image-icon .icon-content {
+            border: 2px solid white;
+            border-radius: 3px;
+        }
+        
+        .image-icon .icon-content::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            top: 5px;
+            left: 5px;
+            animation: imageSelect 3s infinite;
+        }
+        
+        @keyframes imageSelect {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .chart-icon .icon-content {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        
+        .chart-icon .icon-content::before,
+        .chart-icon .icon-content::after {
+            content: '';
+            width: 5px;
+            background: white;
+            position: absolute;
+            bottom: 0;
+        }
+        
+        .chart-icon .icon-content::before {
+            height: 60%;
+            left: 8px;
+            animation: chartBar1 3s infinite;
+        }
+        
+        .chart-icon .icon-content::after {
+            height: 80%;
+            right: 8px;
+            animation: chartBar2 3s infinite;
+        }
+        
+        @keyframes chartBar1 {
+            0%, 100% { height: 60%; }
+            50% { height: 75%; }
+        }
+        
+        @keyframes chartBar2 {
+            0%, 100% { height: 80%; }
+            50% { height: 65%; }
+        }
+        
+        .design-icon .icon-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .design-icon .icon-content::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 3px;
+            position: absolute;
+            animation: designPulse 3s infinite;
+        }
+        
+        @keyframes designPulse {
+            0%, 100% { transform: rotate(0); }
+            50% { transform: rotate(45deg); }
+        }
+        
+        /* 添加多专家模型AI算法部分样式 */
+        .ai-algorithm {
+            margin-top: 5rem;
+            padding: 3rem 2rem;
+            background: rgba(18, 18, 32, 0.6);
+            border-radius: 16px;
+            position: relative;
+        }
+        
+        .ai-algorithm-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .algorithm-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            position: relative;
+        }
+        
+        .algorithm-card {
+            background: rgba(25, 25, 40, 0.8);
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            border-radius: 10px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .algorithm-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 102, 255, 0.2);
+        }
+        
+        .algorithm-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .algorithm-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .algorithm-description {
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        /* 添加亮色主题样式 */
+        body.light-theme .feature-card,
+        body.light-theme .algorithm-card,
+        body.light-theme .business-plan,
+        body.light-theme .ai-algorithm,
+        body.light-theme .flow-step {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        body.light-theme .feature-description,
+        body.light-theme .algorithm-description {
+            color: var(--text-dark);
+        }
+        
+        body.light-theme .algorithm-title,
+        body.light-theme .flow-step h3,
+        body.light-theme .flow-step p {
+            color: var(--text-dark);
+        }
+        
+        body.light-theme .feature-title,
+        body.light-theme .business-plan-title,
+        body.light-theme .ai-algorithm-title {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* 亮色主题下的圆形光效 */
+        body.light-theme .glowing-circle {
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, rgba(112, 0, 255, 0.05) 70%, rgba(0, 0, 0, 0) 100%);
+        }
+        
+        /* 亮色主题下的文字颜色 */
+        body.light-theme .subtitle {
+            color: var(--text-dark);
+            opacity: 0.8;
+        }
+        
+        /* 亮色主题下的图标背景 */
+        body.light-theme .feature-icon,
+        body.light-theme .algorithm-icon {
+            box-shadow: 0 5px 15px rgba(0, 102, 255, 0.2);
+        }
+        
+        /* 亮色主题下的步骤数字 */
+        body.light-theme .step-number {
+            color: white;
+        }
+        
+        /* 主题切换按钮样式 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加主题切换按钮 -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg id="darkIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3ZM12 19C8.13 19 5 15.87 5 12C5 8.13 8.13 5 12 5C15.87 5 19 8.13 19 12C19 15.87 15.87 19 12 19Z" fill="white"/>
+            <path d="M12 7V17C14.76 17 17 14.76 17 12C17 9.24 14.76 7 12 7Z" fill="white"/>
+        </svg>
+        <svg id="lightIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <path d="M12 7C9.24 7 7 9.24 7 12C7 14.76 9.24 17 12 17C14.76 17 17 14.76 17 12C17 9.24 14.76 7 12 7ZM2 13H4C4.55 13 5 12.55 5 12C5 11.45 4.55 11 4 11H2C1.45 11 1 11.45 1 12C1 12.55 1.45 13 2 13ZM20 13H22C22.55 13 23 12.55 23 12C23 11.45 22.55 11 22 11H20C19.45 11 19 11.45 19 12C19 12.55 19.45 13 20 13ZM11 2V4C11 4.55 11.45 5 12 5C12.55 5 13 4.55 13 4V2C13 1.45 12.55 1 12 1C11.45 1 11 1.45 11 2ZM11 20V22C11 22.55 11.45 23 12 23C12.55 23 13 22.55 13 22V20C13 19.45 12.55 19 12 19C11.45 19 11 19.45 11 20ZM5.99 4.58C5.6 4.19 4.96 4.19 4.58 4.58C4.19 4.97 4.19 5.61 4.58 5.99L5.64 7.05C6.03 7.44 6.67 7.44 7.05 7.05C7.44 6.66 7.44 6.02 7.05 5.64L5.99 4.58ZM18.36 16.95C17.97 16.56 17.33 16.56 16.95 16.95C16.56 17.34 16.56 17.98 16.95 18.36L18.01 19.42C18.4 19.81 19.04 19.81 19.42 19.42C19.81 19.03 19.81 18.39 19.42 18.01L18.36 16.95ZM19.42 5.99C19.81 5.6 19.81 4.96 19.42 4.58C19.03 4.19 18.39 4.19 18.01 4.58L16.95 5.64C16.56 6.03 16.56 6.67 16.95 7.05C17.34 7.44 17.98 7.44 18.36 7.05L19.42 5.99ZM7.05 18.36C7.44 17.97 7.44 17.33 7.05 16.95C6.66 16.56 6.02 16.56 5.64 16.95L4.58 18.01C4.19 18.4 4.19 19.04 4.58 19.42C4.97 19.81 5.61 19.81 5.99 19.42L7.05 18.36Z" fill="white"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1 class="logo">AISlides</h1>
+                <p class="subtitle">AI-Driven Presentation Generation Tool</p>
+            </div>
+            <div class="glowing-circle circle-1"></div>
+            <div class="glowing-circle circle-2"></div>
+        </header>
+        
+        <section class="features">
+            <div class="feature-card floating-element" style="animation-delay: 0s;">
+                <div class="feature-icon ai-icon">
+                    <div class="icon-content"></div>
+                </div>
+                <h3 class="feature-title">AI Content Generation</h3>
+                <p class="feature-description">Automatically generates professional presentation content, including text, headings, and structure</p>
+            </div>
+            
+            <div class="feature-card floating-element" style="animation-delay: 0.5s;">
+                <div class="feature-icon image-icon">
+                    <div class="icon-content"></div>
+                </div>
+                <h3 class="feature-title">Smart Image Selection</h3>
+                <p class="feature-description">AI automatically selects high-quality images and icons relevant to your content</p>
+            </div>
+            
+            <div class="feature-card floating-element" style="animation-delay: 1s;">
+                <div class="feature-icon chart-icon">
+                    <div class="icon-content"></div>
+                </div>
+                <h3 class="feature-title">Data Visualization</h3>
+                <p class="feature-description">Automatically creates professional charts and data visualizations</p>
+            </div>
+            
+            <div class="feature-card floating-element" style="animation-delay: 1.5s;">
+                <div class="feature-icon design-icon">
+                    <div class="icon-content"></div>
+                </div>
+                <h3 class="feature-title">Intelligent Design</h3>
+                <p class="feature-description">Automatically applies the best design and typography based on your content</p>
+            </div>
+        </section>
+        
+        <section class="business-plan">
+            <h2 class="business-plan-title">AISLIDES Business Plan</h2>
+            <div class="glow-effect"></div>
+            
+            <div class="business-flow">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <h3>Market Analysis</h3>
+                    <p>Identify target audience and competitor analysis</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <h3>Product Development</h3>
+                    <p>AI algorithm refinement and UI design</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <h3>Go-to-Market</h3>
+                    <p>Launch strategy and marketing plan</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <h3>Growth & Scaling</h3>
+                    <p>Enterprise partnerships and feature expansion</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 添加多专家模型AI算法部分 -->
+        <section class="ai-algorithm">
+            <h2 class="ai-algorithm-title">MULTI-EXPERT AI TECHNOLOGY</h2>
+            <div class="glow-effect"></div>
+            
+            <div class="algorithm-cards">
+                <div class="algorithm-card floating-element" style="animation-delay: 0s;">
+                    <div class="algorithm-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="white" stroke-width="2"/>
+                            <path d="M3 12H5M12 3V5M19 12H21M12 19V21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="algorithm-title">Natural Language Processing</h3>
+                    <p class="algorithm-description">Advanced NLP models analyze your input to generate coherent, contextually relevant presentation content with professional tone and structure.</p>
+                </div>
+                
+                <div class="algorithm-card floating-element" style="animation-delay: 0.6s;">
+                    <div class="algorithm-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 18H21V6H3V18Z" stroke="white" stroke-width="2"/>
+                            <path d="M9 10L11 12L15 8" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="algorithm-title">Multi-Expert System</h3>
+                    <p class="algorithm-description">Combines specialized AI models for content creation, design, data visualization, and audience engagement to create presentations that truly stand out.</p>
+                </div>
+                
+                <div class="algorithm-card floating-element" style="animation-delay: 0.9s;">
+                    <div class="algorithm-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3V21" stroke="white" stroke-width="2"/>
+                            <path d="M5 8L19 8" stroke="white" stroke-width="2"/>
+                            <path d="M5 16L19 16" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="algorithm-title">Adaptive Design Intelligence</h3>
+                    <p class="algorithm-description">Dynamically applies design principles based on content type, audience, and presentation purpose for maximum visual impact and clarity.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create animated background particles
+            const container = document.querySelector('.container');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 3 + 'px';
+                particle.style.height = Math.random() * 3 + 'px';
+                particle.style.background = 'rgba(0, 102, 255, 0.3)';
+                particle.style.borderRadius = '50%';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animation = `float ${Math.random() * 6 + 4}s linear infinite`;
+                particle.style.zIndex = '0';
+                container.appendChild(particle);
+            }
+            
+            // 主题切换功能
+            const themeToggle = document.getElementById('themeToggle');
+            const darkIcon = document.getElementById('darkIcon');
+            const lightIcon = document.getElementById('lightIcon');
+            
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light-theme');
+                
+                // 切换图标显示
+                if (document.body.classList.contains('light-theme')) {
+                    darkIcon.style.display = 'none';
+                    lightIcon.style.display = 'block';
+                } else {
+                    darkIcon.style.display = 'block';
+                    lightIcon.style.display = 'none';
+                }
+                
+                // 更新粒子颜色
+                const particles = document.querySelectorAll('.container > div[style*="position: absolute"]');
+                particles.forEach(particle => {
+                    if (document.body.classList.contains('light-theme')) {
+                        particle.style.background = 'rgba(0, 102, 255, 0.2)';
+                    } else {
+                        particle.style.background = 'rgba(0, 102, 255, 0.3)';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

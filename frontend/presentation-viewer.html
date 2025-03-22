@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>演示文稿查看器 - AI Slides</title>
+    <title>Presentation Viewer - AI Slides</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="presentation-viewer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,15 +21,15 @@
                 <span>AI</span>Slides
             </div>
             <ul class="nav-links">
-                <li><a href="index.html#home">首页</a></li>
-                <li><a href="index.html#features">功能</a></li>
-                <li><a href="index.html#templates">模板</a></li>
-                <li><a href="index.html#pricing">价格</a></li>
-                <li><a href="index.html#contact">联系我们</a></li>
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#templates">Templates</a></li>
+                <li><a href="index.html#pricing">Pricing</a></li>
+                <li><a href="index.html#contact">Contact Us</a></li>
             </ul>
             <div class="auth-buttons">
-                <button onclick="window.location.href=window.config.googleAuthUrl" class="login-btn">登录</button>
-                <button onclick="window.location.href='register.html'" class="signup-btn">注册</button>
+                <button onclick="window.location.href=window.config.googleAuthUrl" class="login-btn">Login</button>
+                <button onclick="window.location.href='register.html'" class="signup-btn">Register</button>
             </div>
         </nav>
     </header>
@@ -37,26 +37,23 @@
     <main>
         <div class="presentation-controls">
             <div class="presentation-title">
-                <h1 id="presentation-title">演示文稿</h1>
+                <h1 id="presentation-title">Presentation</h1>
             </div>
             <div class="presentation-actions">
                 <button id="download-btn" class="action-btn">
-                    <i class="fas fa-download"></i> 下载 HTML
-                </button>
-                <button id="print-btn" class="action-btn">
-                    <i class="fas fa-print"></i> 打印
+                    <i class="fas fa-download"></i> Download HTML
                 </button>
                 <button id="back-btn" class="action-btn" onclick="window.location.href='index.html'">
-                    <i class="fas fa-arrow-left"></i> 返回
+                    <i class="fas fa-arrow-left"></i> Back
                 </button>
             </div>
         </div>
 
         <div class="presentation-container" id="presentation-container">
-            <!-- 演示文稿内容将在这里动态加载 -->
+            <!-- Presentation content will be dynamically loaded here -->
             <div class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
-                <p>正在加载演示文稿...</p>
+                <p>Loading presentation...</p>
             </div>
         </div>
     </main>
@@ -68,44 +65,44 @@
             </div>
             <div class="footer-links">
                 <div class="footer-column">
-                    <h4>产品</h4>
+                    <h4>Product</h4>
                     <ul>
-                        <li><a href="#">功能</a></li>
-                        <li><a href="#">模板</a></li>
-                        <li><a href="#">价格</a></li>
-                        <li><a href="#">更新日志</a></li>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Templates</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Changelog</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h4>资源</h4>
+                    <h4>Resources</h4>
                     <ul>
-                        <li><a href="#">博客</a></li>
-                        <li><a href="#">教程</a></li>
-                        <li><a href="#">支持</a></li>
-                        <li><a href="#">API 文档</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">API Documentation</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h4>公司</h4>
+                    <h4>Company</h4>
                     <ul>
-                        <li><a href="#">关于我们</a></li>
-                        <li><a href="#">联系我们</a></li>
-                        <li><a href="#">招聘</a></li>
-                        <li><a href="#">合作伙伴</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h4>法律</h4>
+                    <h4>Legal</h4>
                     <ul>
-                        <li><a href="#">隐私政策</a></li>
-                        <li><a href="#">服务条款</a></li>
-                        <li><a href="#">Cookie 政策</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2023 AISlides. 保留所有权利。</p>
+            <p>&copy; 2023 AISlides. All rights reserved.</p>
             <div class="social-icons">
                 <a href="#"><i class="fab fa-twitter"></i></a>
                 <a href="#"><i class="fab fa-facebook"></i></a>

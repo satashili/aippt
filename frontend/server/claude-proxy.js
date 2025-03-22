@@ -58,7 +58,8 @@ app.post('/api/claude/generate-presentation', async (req, res) => {
 3. 风格: ${style || '请使用现代大气风格'}
 4. 颜色主题: ${colorTheme || '请使用蓝色系精美配色'}
 5. 如果客户输入是中文，请使用中文输出，如果客户输入是英文，请使用英文输出
-6. 直接输出HTML代码，不要包含任何解释或其他文本`;
+6. 请保证网页在移动端的适配
+7. 直接输出HTML代码，不要包含任何解释或其他文本`;
 
         const userPrompt = prompt;
 

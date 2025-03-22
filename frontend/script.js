@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 获取输入内容
             const promptText = document.getElementById('presentation-prompt').value.trim();
             if (!promptText) {
-                alert('请输入演示文稿描述');
+                alert('Please enter a presentation description');
                 return;
             }
             
@@ -159,9 +159,26 @@ document.addEventListener('DOMContentLoaded', function() {
             // 显示加载状态
             this.classList.add('loading');
             
+            // 创建加载消息数组
+            const loadingMessages = [
+                "AI is creating...",
+                "Good things take time...",
+                "AISlides is working..."
+            ];
+            
+            let messageIndex = 0;
+            const loadingTextElement = this.querySelector('.loading-text');
+            const originalText = loadingTextElement.innerHTML;
+            
+            // 设置定时器，每2秒更换一次消息
+            const messageInterval = setInterval(() => {
+                messageIndex = (messageIndex + 1) % loadingMessages.length;
+                loadingTextElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingMessages[messageIndex]}`;
+            }, 2000);
+            
             try {
-                console.log('调用 Claude API 生成演示文稿...');
-                console.log('参数:', { promptText, style, slideCount, colorTheme });
+                console.log('Calling Claude API to generate presentation...');
+                console.log('Parameters:', { promptText, style, slideCount, colorTheme });
                 
                 // 调用 Claude API 生成演示文稿
                 const presentation = await window.claudeAPI.generatePresentation(
@@ -171,20 +188,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     colorTheme
                 );
                 
-                console.log('收到演示文稿数据:', presentation);
+                console.log('Received presentation data:', presentation);
                 
                 // 将演示文稿数据编码为 URL 参数
                 const presentationData = encodeURIComponent(JSON.stringify(presentation));
                 
-                console.log('准备跳转到演示文稿查看器页面');
+                console.log('Preparing to redirect to presentation viewer page');
                 
                 // 使用 sessionStorage 存储数据
                 sessionStorage.setItem('presentationData', JSON.stringify(presentation));
                 window.location.href = 'presentation-viewer.html';
             } catch (error) {
-                console.error('生成演示文稿失败:', error);
-                alert(`生成演示文稿失败: ${error.message || '未知错误'}`);
+                console.error('Failed to generate presentation:', error);
+                alert(`Failed to generate presentation: ${error.message || 'Unknown error'}`);
                 this.classList.remove('loading');
+                
+                // 清除消息定时器
+                clearInterval(messageInterval);
+                
+                // 恢复原始加载文本
+                loadingTextElement.innerHTML = originalText;
             }
         });
     }
@@ -193,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const styleInput = document.getElementById('style-input');
     if (styleInput) {
         // 风格选项预设
-        const stylePresets = ['简约商务', '创意设计', '科技感', '赛博朋克', '自然风光', '复古风', '极简主义'];
+        const stylePresets = ['Simple business', 'Creative design', 'Technology', 'Cyberpunk', 'Natural scenery', 'Retro style', 'Minimalism'];
         
         // 创建风格预设标签
         const stylePresetContainer = document.createElement('div');
@@ -420,6 +443,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // 添加 CTA 按钮点击事件
+    const getStartedBtn = document.querySelector('.cta-button');
+    const watchDemoBtn = document.querySelector('.secondary-button');
+    
+    // 添加 Get Started 按钮点击事件
+    if (getStartedBtn) {
+        getStartedBtn.addEventListener('click', function() {
+            // 滚动到 generator 部分
+            const generatorSection = document.querySelector('#generator');
+            if (generatorSection) {
+                window.scrollTo({
+                    top: generatorSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    }
+    
+    // 添加 Watch Demo 按钮点击事件
+    if (watchDemoBtn) {
+        watchDemoBtn.addEventListener('click', function() {
+            // 跳转到 images/2.html
+            window.location.href = 'images/2.html';
+        });
+    }
+
     // 添加打字机效果
     const textElement = document.querySelector('.hero-content p');
     if (textElement) {
@@ -448,6 +497,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         card.addEventListener('mouseleave', function() {
             this.style.transform = '';
+        });
+    });
+
+    // 添加模板按钮点击事件
+    const templateButtons = document.querySelectorAll('.use-template-btn');
+    templateButtons.forEach((button, index) => {
+        // 修改按钮文本为"Show This Template"
+        button.textContent = 'Show This Template';
+        
+        // 添加点击事件处理
+        button.addEventListener('click', function() {
+            // 根据索引确定要打开的HTML文件
+            const templateFile = `images/${index + 1}.html`;
+            
+            // 打开对应的HTML文件
+            window.open(templateFile, '_blank');
         });
     });
 
