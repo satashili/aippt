@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Smart PPT Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Registration form specific styles */
+        .register-section {
+            padding: 80px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 300px);
+        }
+        
+        .register-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .register-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .register-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e4e4e4;
+        }
+        
+        .register-form input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .register-form input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .register-form .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .register-form .submit-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            color: #e4e4e4;
+        }
+        
+        .divider:before, .divider:after {
+            content: "";
+            flex-grow: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
+        .social-login {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            background-color: white;
+            border-radius: 6px;
+            color: #333;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .google-btn:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .google-btn i {
+            margin-right: 10px;
+            color: #DB4437;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #e4e4e4;
+        }
+        
+        .login-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        window.config = {
+            apiBaseUrl: 'http://localhost:8080',
+            googleAuthUrl: 'http://localhost:8080/oauth2/authorization/google'
+        };
+    </script>
+</head>
+<body>
+    <div class="particles-container" id="particles-js"></div>
+    
+    <header>
+        <nav>
+            <div class="logo">
+                <span>AI</span>Slides
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#templates">Templates</a></li>
+                <li><a href="index.html#pricing">Pricing</a></li>
+                <li><a href="index.html#contact">Contact Us</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button onclick="window.location.href=window.config.googleAuthUrl" class="login-btn">Log in</button>
+                <button class="signup-btn active">Sign up</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="register-section">
+            <div class="register-container">
+                <div class="register-header">
+                    <h2>Create Your Account</h2>
+                    <p>Join us and start creating beautiful presentations with AI</p>
+                </div>
+                
+                <form class="register-form" id="registerForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Create a password (min. 6 characters)" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    
+                    <!-- 添加错误消息显示区域 -->
+                    <div id="error-container" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px; background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); color: #ff6b6b;">
+                        <p id="error-message"></p>
+                        <ul id="error-details"></ul>
+                    </div>
+                    
+                    <div class="password-requirements">
+                        <p>Password must:</p>
+                        <ul>
+                            <li>Be at least 8 characters long</li>
+                            <li>Include at least one uppercase letter</li>
+                            <li>Include at least one lowercase letter</li>
+                            <li>Include at least one number</li>
+                            <li>Include at least one special character (@$!%*?&)</li>
+                        </ul>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <div class="social-login">
+                    <button onclick="window.location.href=window.config.googleAuthUrl" class="google-btn">
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+                
+                <div class="login-link">
+                    Already have an account? <a href="#" onclick="window.location.href=window.config.googleAuthUrl">Log in</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span>AI</span>Slides
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Templates</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 AISlides. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Particles effect configuration
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#ffffff" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: false },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#ffffff",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: false,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 1 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+            
+            // Form submission handling
+            const registerForm = document.getElementById('registerForm');
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // 打印表单数据
+                console.log('==================== Form Data ====================');
+                console.log('Name:', name);
+                console.log('Email:', email);
+                console.log('Password Length:', password.length);
+                console.log('Confirm Password Length:', confirmPassword.length);
+                console.log('=====================================================');
+                
+                // Simple form validation
+                if (!name || !email || !password || !confirmPassword) {
+                    console.log('Form validation failed: Please fill in all required fields');
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    console.log('Form validation failed: Passwords do not match');
+                    alert('Passwords do not match');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    console.log('Form validation failed: Password too short');
+                    alert('Password must be at least 6 characters long');
+                    return;
+                }
+                
+                // Loading state
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.textContent = 'Creating account...';
+                submitBtn.disabled = true;
+                
+                // 打印请求数据
+                const requestData = {
+                    name: name,
+                    email: email,
+                    password: password
+                };
+                console.log('==================== Sending Request Data ====================');
+                console.log('Request URL:', `${window.config.apiBaseUrl}/api/auth/register`);
+                console.log('Request Data:', JSON.stringify(requestData, null, 2));
+                console.log('=====================================================');
+                
+                // Send registration request
+                fetch(`${window.config.apiBaseUrl}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    console.log('==================== Response Received ====================');
+                    console.log('Response Status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response Data:', JSON.stringify(data, null, 2));
+                    console.log('=====================================================');
+                    
+                    if (data.success) {
+                        console.log('Registration successful, redirecting to login page');
+                        alert('Registration successful! Redirecting to login page...');
+                        window.location.href = window.config.googleAuthUrl;
+                    } else {
+                        // 重置按钮
+                        submitBtn.textContent = 'Create Account';
+                        submitBtn.disabled = false;
+                        
+                        // 显示错误容器
+                        const errorContainer = document.getElementById('error-container');
+                        const errorMessage = document.getElementById('error-message');
+                        const errorDetails = document.getElementById('error-details');
+                        
+                        errorContainer.style.display = 'block';
+                        errorDetails.innerHTML = '';
+                        
+                        if (data.errors) {
+                            // 处理字段验证错误
+                            console.log('==================== Validation Errors ====================');
+                            errorMessage.textContent = 'Registration failed, please check the following errors:';
+                            
+                            for (const field in data.errors) {
+                                console.log(`Field ${field} error:`, data.errors[field]);
+                                // 添加到错误详情列表
+                                const errorItem = document.createElement('li');
+                                errorItem.textContent = `${getFieldDisplayName(field)}: ${data.errors[field]}`;
+                                errorDetails.appendChild(errorItem);
+                            }
+                            console.log('=====================================================');
+                        } else {
+                            // 处理一般错误
+                            console.log('Registration failed:', data.message || 'Unknown error');
+                            errorMessage.textContent = `Registration failed: ${data.message || 'Unknown error'}`;
+                            
+                            // 显示错误类型
+                            if (data.errorType) {
+                                const errorTypeItem = document.createElement('li');
+                                errorTypeItem.textContent = `Error type: ${getErrorTypeDisplayName(data.errorType)}`;
+                                errorDetails.appendChild(errorTypeItem);
+                            }
+                            
+                            // 显示错误详情
+                            if (data.errorDetails) {
+                                for (const key in data.errorDetails) {
+                                    const errorItem = document.createElement('li');
+                                    errorItem.textContent = `${key}: ${data.errorDetails[key]}`;
+                                    errorDetails.appendChild(errorItem);
+                                }
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('==================== Request Error ====================');
+                    console.error('Error Details:', error);
+                    console.error('=====================================================');
+                    
+                    // 重置按钮
+                    submitBtn.textContent = 'Create Account';
+                    submitBtn.disabled = false;
+                    
+                    // 显示网络错误
+                    const errorContainer = document.getElementById('error-container');
+                    const errorMessage = document.getElementById('error-message');
+                    errorContainer.style.display = 'block';
+                    errorMessage.textContent = 'Failed to connect to server. Please check your network connection or try again later.';
+                });
+            });
+            
+            // 辅助函数：将字段名转换为显示名称
+            function getFieldDisplayName(field) {
+                const fieldNames = {
+                    'name': 'Name',
+                    'email': 'Email',
+                    'password': 'Password',
+                    'confirmPassword': 'Confirm Password'
+                };
+                return fieldNames[field] || field;
+            }
+            
+            // 辅助函数：将错误类型转换为显示名称
+            function getErrorTypeDisplayName(errorType) {
+                const errorTypes = {
+                    'USER_EXISTS': 'User already exists',
+                    'INVALID_INPUT': 'Invalid input',
+                    'INTERNAL_ERROR': 'Internal error'
+                };
+                return errorTypes[errorType] || errorType;
+            }
+        });
+    </script>
+</body>
+</html>

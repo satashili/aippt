@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Claude API 测试</h1>
+    
+    <button id="test-btn">测试 API 连接</button>
+    
+    <h2>响应结果：</h2>
+    <pre id="result">等待测试...</pre>
+    
+    <script>
+        document.getElementById('test-btn').addEventListener('click', async function() {
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = '正在测试...';
+            
+            try {
+                const response = await fetch('/api/claude/test');
+                const data = await response.json();
+                resultElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultElement.textContent = `测试失败: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html> 

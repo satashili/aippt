@@ -1,0 +1,21 @@
+{
+  "name": "claude-proxy-server",
+  "version": "1.0.0",
+  "description": "代理服务器，用于调用 Claude API 生成演示文稿",
+  "main": "claude-proxy.js",
+  "scripts": {
+    "start": "node claude-proxy.js",
+    "dev": "nodemon claude-proxy.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.18.0",
+    "axios": "^1.6.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+} 

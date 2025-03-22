@@ -1,0 +1,19 @@
+{
+  "name": "aippt-frontend",
+  "version": "1.0.0",
+  "description": "AI PPT Generator Frontend",
+  "scripts": {
+    "start": "http-server . -p 3000 --cors -o --no-cache"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.8",
+    "@mui/material": "^6.4.8",
+    "axios": "^1.8.3",
+    "react-router-dom": "^7.4.0"
+  }
+}
