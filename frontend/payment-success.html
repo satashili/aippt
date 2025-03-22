@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - AISlides</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .success-container {
+            max-width: 800px;
+            margin: 80px auto;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            color: #2ecc71;
+            margin-bottom: 20px;
+        }
+        
+        .success-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .success-message {
+            font-size: 18px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .subscription-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .subscription-details h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        .back-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <span>AI</span>Slides
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#templates">Templates</a></li>
+                <li><a href="index.html#pricing">Pricing</a></li>
+                <li><a href="index.html#contact">Contact Us</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button onclick="window.location.href='dashboard.html'" class="login-btn">Dashboard</button>
+                <button onclick="logout()" class="signup-btn">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="success-container">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h1 class="success-title">Payment Successful!</h1>
+            <p class="success-message">Thank you for subscribing to AISlides. Your account has been successfully activated and you can now use all premium features immediately.</p>
+            
+            <div class="subscription-details">
+                <h3>Subscription Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Membership Type:</span>
+                    <span id="plan-type">Loading...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span>Active</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Order ID:</span>
+                    <span id="order-id">Loading...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Order Date:</span>
+                    <span id="order-date">Loading...</span>
+                </div>
+            </div>
+            
+            <p>We have sent an order confirmation email to your inbox.</p>
+            <a href="dashboard.html" class="back-btn">Go to Dashboard</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span>AI</span>Slides
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Templates</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 AISlides. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const plan = urlParams.get('plan');
+            const paymentIntentId = urlParams.get('payment_intent');
+            
+            // 如果有支付意向ID，调用处理成功API
+            if (paymentIntentId) {
+                try {
+                    const processResponse = await fetch('/api/payment/process-success', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentIntentId })
+                    });
+                    
+                    if (!processResponse.ok) {
+                        console.error('支付处理失败，但会继续显示支付详情');
+                    }
+                } catch (err) {
+                    console.error('处理支付成功时出错:', err);
+                    // 错误处理，但仍继续显示页面
+                }
+            }
+            
+            // Get plan type from URL
+            const planType = document.getElementById('plan-type');
+            
+            if (plan === 'monthly') {
+                planType.textContent = 'Monthly Membership';
+            } else if (plan === 'annual') {
+                planType.textContent = 'Annual Membership'; 
+            } else {
+                planType.textContent = 'Premium Membership';
+            }
+            
+            // Get payment details
+            try {
+                const response = await fetch('/api/payment/details', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                if (response.ok) {
+                    const paymentDetails = await response.json();
+                    document.getElementById('order-id').textContent = paymentDetails.orderId || 'Not provided';
+                    
+                    // Format order date
+                    const orderDate = paymentDetails.createdAt 
+                        ? new Date(paymentDetails.createdAt).toLocaleDateString('en-US') 
+                        : new Date().toLocaleDateString('en-US');
+                    document.getElementById('order-date').textContent = orderDate;
+                } else {
+                    console.error('Unable to get payment details');
+                    document.getElementById('order-id').textContent = 'Not provided';
+                    document.getElementById('order-date').textContent = new Date().toLocaleDateString('en-US');
+                }
+            } catch (err) {
+                console.error('Error while retrieving payment details:', err);
+                document.getElementById('order-id').textContent = 'Not provided';
+                document.getElementById('order-date').textContent = new Date().toLocaleDateString('en-US');
+            }
+        });
+        
+        function logout() {
+            // Send logout request
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch(error => {
+                console.error('Logout failed:', error);
+                alert('Logout failed. Please try again later.');
+            });
+        }
+    </script>
+</body>
+</html> 

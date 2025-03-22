@@ -6,6 +6,13 @@
     <title>Smart PPT Generator - AI-Driven Presentation Creation Tool</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        window.config = {
+            apiBaseUrl: 'http://localhost:8080',
+            googleAuthUrl: 'http://localhost:8080/oauth2/authorization/google'
+        };
+    </script>
 </head>
 <body>
     <div class="particles-container" id="particles-js"></div>
@@ -23,8 +30,8 @@
                 <li><a href="#contact">Contact Us</a></li>
             </ul>
             <div class="auth-buttons">
-                <button class="login-btn">Login</button>
-                <button class="signup-btn">Sign Up</button>
+                <button onclick="window.location.href='login.html'" class="login-btn">Log in</button>
+                <button onclick="window.location.href='register.html'" class="signup-btn">Sign up</button>
             </div>
         </nav>
     </header>
@@ -196,7 +203,7 @@
                                 <li><i class="fas fa-check"></i> Watermark-free Export</li>
                             </ul>
                         </div>
-                        <button class="pricing-btn">Subscribe Now</button>
+                        <button class="pricing-btn" onclick="initiatePayment('monthly', 1000)">Subscribe Now</button>
                         <p class="pricing-note">Cancel anytime</p>
                     </div>
                     
@@ -221,7 +228,7 @@
                                 <li><i class="fas fa-check"></i> Team Collaboration Features</li>
                             </ul>
                         </div>
-                        <button class="pricing-btn">Subscribe Now</button>
+                        <button class="pricing-btn" onclick="initiatePayment('annual', 6000)">Subscribe Now</button>
                         <p class="pricing-note">14-day money-back guarantee</p>
                     </div>
                 </div>
@@ -316,5 +323,6 @@
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
+    <script src="payment.js"></script>
 </body>
 </html> 

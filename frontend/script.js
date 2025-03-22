@@ -562,38 +562,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 立即检查登录状态
+    // 检查用户登录状态
     fetch(`${window.config.apiBaseUrl}/user`, {
-        credentials: 'include'
+        credentials: 'include'  // 重要：发送cookie
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`登录失败: ${response.status}`);
+            throw new Error(`登录状态检查失败: ${response.status}`);
         }
         return response.json();
     })
     .then(user => {
-        if (!user || !user.id) {
-            throw new Error('无效的用户数据');
-        }
-        // 用户已登录，显示用户信息
-        document.querySelector('.auth-buttons').innerHTML = `
-            <div class="user-container">
-                <img class="user-avatar" src="${user.picture || 'default-avatar.png'}" alt="User Avatar">
-                <div class="user-details">
-                    <span class="user-name">${user.name || 'Unknown User'}</span>
-                    <span class="user-email">${user.email || ''}</span>
+        if (user && user.id) {
+            // 用户已登录，更新UI显示登录状态
+            document.querySelector('.auth-buttons').innerHTML = `
+                <div class="user-container">
+                    <img class="user-avatar" src="${user.picture || 'images/default-avatar.png'}" alt="头像">
+                    <div class="user-details">
+                        <span class="user-name">${user.name || '用户'}</span>
+                        <span class="user-email">${user.email || ''}</span>
+                    </div>
+                    <button onclick="logout()" class="login-btn">退出</button>
                 </div>
-                <button onclick="logout()" class="login-btn">Sign out</button>
-            </div>
-        `;
+            `;
+        } else {
+            // 确保用户未登录时显示登录按钮
+            document.querySelector('.auth-buttons').innerHTML = `
+                <button onclick="window.location.href='login.html'" class="login-btn">登录</button>
+                <button onclick="window.location.href='register.html'" class="signup-btn">注册</button>
+            `;
+        }
     })
     .catch(error => {
         console.error('登录状态检查失败:', error);
         // 确保用户未登录时显示登录按钮
         document.querySelector('.auth-buttons').innerHTML = `
-            <button onclick="window.location.href=window.config.googleAuthUrl" class="login-btn">Log in</button>
-            <button onclick="window.location.href='register.html'" class="signup-btn">Sign up</button>
+            <button onclick="window.location.href='login.html'" class="login-btn">登录</button>
+            <button onclick="window.location.href='register.html'" class="signup-btn">注册</button>
         `;
     });
 });

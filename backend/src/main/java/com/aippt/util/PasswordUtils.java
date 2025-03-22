@@ -3,11 +3,15 @@ package com.aippt.util;
 import com.aippt.exception.InvalidPasswordException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 密码工具类 - 封装所有密码相关操作
  */
 public class PasswordUtils {
+    
+    private static final Logger log = LoggerFactory.getLogger(PasswordUtils.class);
     
     // 创建BCryptPasswordEncoder实例，而不是通过依赖注入
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -22,18 +26,11 @@ public class PasswordUtils {
         if (rawPassword == null) {
             return null;
         }
-        return passwordEncoder.encode(rawPassword);
-    }
-    
-    /**
-     * 处理密码加密，如果密码为空则返回null
-     * 主要用于用户更新场景
-     * 
-     * @param password 原始密码，可能为null
-     * @return 加密后的密码或null
-     */
-    public static String processPassword(String password) {
-        return password != null ? encodePassword(password) : null;
+        String encoded = passwordEncoder.encode(rawPassword);
+        log.debug("密码加密: 原始密码长度={}, 加密后密码长度={}", 
+                 (rawPassword != null ? rawPassword.length() : 0), 
+                 (encoded != null ? encoded.length() : 0));
+        return encoded;
     }
     
     /**
@@ -45,9 +42,19 @@ public class PasswordUtils {
      */
     public static boolean matchPassword(String rawPassword, String encodedPassword) {
         if (rawPassword == null || encodedPassword == null) {
+            log.warn("密码验证失败: 原始密码或加密密码为null");
             return false;
         }
-        return passwordEncoder.matches(rawPassword, encodedPassword);
+        
+        try {
+            boolean matches =  passwordEncoder.matches(rawPassword, encodedPassword);
+            log.debug("密码验证结果: {}, 原始密码长度={}, 加密密码长度={}", 
+                      matches, rawPassword.length(), encodedPassword.length());
+            return matches;
+        } catch (Exception e) {
+            log.error("密码验证异常: {}", e.getMessage(), e);
+            return false;
+        }
     }
     
     /**
@@ -58,6 +65,10 @@ public class PasswordUtils {
      * @throws InvalidPasswordException 如果密码不匹配
      */
     public static void validatePassword(String rawPassword, String encodedPassword) {
+        log.debug("验证密码: 原始密码长度={}, 加密密码长度={}", 
+                 (rawPassword != null ? rawPassword.length() : 0), 
+                 (encodedPassword != null ? encodedPassword.length() : 0));
+        
         if (!matchPassword(rawPassword, encodedPassword)) {
             throw new InvalidPasswordException("密码不正确");
         }

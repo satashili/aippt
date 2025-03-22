@@ -1,16 +1,22 @@
 package com.aippt.service.impl;
 
 import com.aippt.entity.User;
+import com.aippt.entity.VerificationToken;
 import com.aippt.exception.OAuthProcessingException;
 import com.aippt.exception.UserAlreadyExistsException;
 import com.aippt.exception.UserNotFoundException;
 import com.aippt.exception.UnsupportedAuthTypeException;
+import com.aippt.exception.InvalidPasswordException;
+import com.aippt.exception.InvalidTokenException;
 import com.aippt.mapper.UserMapper;
+import com.aippt.service.EmailService;
 import com.aippt.service.UserService;
+import com.aippt.service.VerificationTokenService;
 import com.aippt.util.PasswordUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +33,12 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    @Autowired
+    private VerificationTokenService verificationTokenService;
+    
+    @Autowired
+    private EmailService emailService;
 
     /**
      * 根据用户ID查询用户信息
@@ -98,21 +110,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 throw new UserAlreadyExistsException("邮箱已被注册");
             }
         }
-        
+
         // 用户不存在，创建新用户
         String userId = UUID.randomUUID().toString();
         LocalDateTime now = LocalDateTime.now();
         
         // 加密密码
-        String encodedPassword = PasswordUtils.processPassword(password);
-        
+        String encodedPassword = PasswordUtils.encodePassword(password);
+
         // 创建新用户
         User newUser = User.builder()
                 .id(userId)
                 .email(email)
                 .name(name)
                 .password(encodedPassword)  // 存储加密后的密码
-                .emailVerified(false)
+                .emailVerified(false)  // 默认邮箱未验证
                 .isMember(false)
                 .memberExpireTime(null)
                 .createdAt(now)
@@ -124,6 +136,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         
         log.info("注册新用户: ID={}, Email={}, CreatedAt={}", newUser.getId(), newUser.getEmail(), newUser.getCreatedAt());
         this.save(newUser);
+        
+        // 创建验证token并发送验证邮件
+        VerificationToken verificationToken = verificationTokenService.createToken(userId);
+        emailService.sendVerificationEmail(email, name, verificationToken.getToken());
         
         return newUser;
     }
@@ -409,5 +425,145 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
          * @param builder 用户构建器
          */
         void accept(User.UserBuilder builder);
+    }
+
+    /**
+     * 用户登录方法
+     * 验证用户邮箱和密码，更新最后登录时间
+     *
+     * @param email 用户邮箱
+     * @param password 用户密码（未加密）
+     * @return 登录成功的用户信息
+     * @throws UserNotFoundException 当用户不存在时抛出
+     * @throws InvalidPasswordException 当密码不正确时抛出
+     */
+    @Override
+    @Transactional
+    public User login(String email, String password) {
+        log.info("用户登录: {}", email);
+        
+        // 查询用户
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getEmail, email);
+        User user = this.getOne(queryWrapper);
+
+        // 检查用户是否存在
+        if (user == null) {
+            log.warn("登录失败: 用户不存在 {}", email);
+            throw new UserNotFoundException("用户不存在或邮箱错误");
+        }
+        
+        // 检查用户类型是否支持密码登录
+        if ("GOOGLE".equals(user.getAuthProvider())) {
+            log.warn("登录失败: Google用户尝试使用密码登录 {}", email);
+            throw new InvalidPasswordException("该账号是通过Google注册的，请使用Google登录");
+        }
+        
+        // 添加邮箱验证状态检查
+        if (!user.getEmailVerified() && !"GOOGLE".equals(user.getAuthProvider())) {
+            log.warn("登录失败: 邮箱未验证 {}", email);
+            throw new InvalidTokenException("请先验证您的邮箱才能登录。如需重新发送验证邮件，请点击下方链接。");
+        }
+        
+        // 验证密码
+        try {
+            log.info("验证用户密码: {}", email);
+
+            PasswordUtils.validatePassword(password, user.getPassword());
+
+            log.info("密码验证成功: {}", email);
+        } catch (InvalidPasswordException e) {
+            log.warn("登录失败: 密码错误 {}", email);
+            throw e; // 重新抛出异常
+        }
+        
+        // 更新最后登录时间
+        LocalDateTime now = LocalDateTime.now();
+        User updatedUser = buildUserWithUpdatedFields(user, builder -> {
+            builder.lastLogin(now);
+        });
+        
+        this.updateById(updatedUser);
+        
+        log.info("用户登录成功: {}", email);
+        return updatedUser;
+    }
+
+    /**
+     * 确认用户邮箱
+     * 根据验证token确认用户邮箱的有效性
+     *
+     * @param token 验证token
+     * @return 确认结果
+     */
+    @Override
+    @Transactional
+    public boolean confirmEmail(String token) {
+        log.info("确认用户邮箱，验证token: {}", token);
+        
+        // 确认token
+        boolean tokenConfirmed = verificationTokenService.confirmToken(token);
+        if (!tokenConfirmed) {
+            log.warn("验证token确认失败: {}", token);
+            return false;
+        }
+        
+        // 获取token关联的用户ID
+        VerificationToken verificationToken = verificationTokenService.findByToken(token);
+        String userId = verificationToken.getUserId();
+        
+        // 更新用户邮箱验证状态
+        User user = this.getById(userId);
+        if (user == null) {
+            log.error("找不到与token关联的用户: {}, userId: {}", token, userId);
+            throw new UserNotFoundException("找不到与token关联的用户");
+        }
+        
+        User updateUser = new User();
+        updateUser.setId(userId);
+        updateUser.setEmailVerified(true);
+        boolean updated = this.updateById(updateUser);
+        
+        log.info("用户邮箱验证状态更新结果: {}, userId: {}", updated, userId);
+        return updated;
+    }
+    
+    /**
+     * 重新发送验证邮件
+     * 为已注册但未验证邮箱的用户重新发送验证邮件
+     *
+     * @param email 用户邮箱
+     * @return 是否成功发送
+     * @throws UserNotFoundException 当用户不存在时抛出
+     */
+    @Override
+    @Transactional
+    public boolean resendVerificationEmail(String email) {
+        log.info("重新发送验证邮件到: {}", email);
+        
+        // 查找用户
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getEmail, email);
+        User user = this.getOne(queryWrapper);
+        
+        if (user == null) {
+            log.warn("用户不存在: {}", email);
+            throw new UserNotFoundException("用户不存在: " + email);
+        }
+        
+        // 检查邮箱是否已验证
+        if (user.getEmailVerified()) {
+            log.info("邮箱已验证，无需重新发送: {}", email);
+            return false;
+        }
+        
+        // 创建新的验证token
+        VerificationToken verificationToken = verificationTokenService.createToken(user.getId());
+        
+        // 发送验证邮件
+        emailService.sendVerificationEmail(user.getEmail(), user.getName(), verificationToken.getToken());
+        
+        log.info("验证邮件重新发送成功: {}", email);
+        return true;
     }
 }

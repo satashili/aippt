@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - Smart PPT Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 验证页面特定样式 */
+        .verification-section {
+            padding: 80px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 300px);
+        }
+        
+        .verification-container {
+            max-width: 550px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+        }
+        
+        .verification-header {
+            margin-bottom: 30px;
+        }
+        
+        .verification-header h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .verification-status {
+            margin: 30px 0;
+        }
+        
+        .verification-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .success-icon {
+            color: #2ecc71;
+        }
+        
+        .error-icon {
+            color: #e74c3c;
+        }
+        
+        .loading-icon {
+            color: #3498db;
+        }
+        
+        .verification-message {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .verification-actions {
+            margin-top: 30px;
+        }
+        
+        .verification-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .verification-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .resend-link {
+            margin-top: 15px;
+            display: inline-block;
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .resend-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        window.config = {
+            apiBaseUrl: 'http://localhost:8080',
+            googleAuthUrl: 'http://localhost:8080/oauth2/authorization/google'
+        };
+    </script>
+</head>
+<body>
+    <div class="particles-container" id="particles-js"></div>
+    
+    <header>
+        <nav>
+            <div class="logo">
+                <span>AI</span>Slides
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#templates">Templates</a></li>
+                <li><a href="index.html#pricing">Pricing</a></li>
+                <li><a href="index.html#contact">Contact Us</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button onclick="window.location.href='login.html'" class="login-btn">Log in</button>
+                <button onclick="window.location.href='register.html'" class="signup-btn">Sign up</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="verification-section">
+            <div class="verification-container">
+                <div class="verification-header">
+                    <h2>Email Verification</h2>
+                    <p>We're verifying your email address</p>
+                </div>
+                
+                <div class="verification-status" id="verificationStatus">
+                    <div class="verification-icon loading-icon">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="verification-message">
+                        Please wait while we verify your email address...
+                    </div>
+                </div>
+                
+                <div class="verification-actions" id="verificationActions" style="display: none;">
+                    <!-- Actions will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span>AI</span>Slides
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Templates</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 AISlides. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化粒子效果
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#ffffff" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: false },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#ffffff",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: false,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 1 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+            
+            // 获取URL中的token参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const email = urlParams.get('email'); // 可选，有些系统会在URL中包含email
+            
+            // 验证状态和动作元素
+            const verificationStatus = document.getElementById('verificationStatus');
+            const verificationActions = document.getElementById('verificationActions');
+            
+            // 如果没有token，显示错误
+            if (!token) {
+                showError('Invalid Verification Link', 'This link is missing a verification token and cannot be used to verify your email address.');
+                return;
+            }
+            
+            // 显示验证中状态
+            showLoading('Verifying your email address...');
+            
+            // 发送验证请求到后端
+            fetch(`${window.config.apiBaseUrl}/api/auth/verify-email?token=${encodeURIComponent(token)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Verification failed with status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showSuccess('Email Verification Successful!', 'Your email has been successfully verified. You can now log in and start using our services.');
+                } else {
+                    if (data.errorType === 'TOKEN_EXPIRED') {
+                        showExpired('Verification Link Expired', 'Your verification link has expired. Please click the button below to resend the verification email.');
+                    } else {
+                        showError('Verification Failed', data.message || 'Unable to verify your email address. Please try resending the verification email.');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Verification error:', error);
+                showError('Verification Error', 'An error occurred while verifying your email address. Please try again later or contact customer support.');
+            });
+            
+            // 显示成功状态
+            function showSuccess(title, message) {
+                verificationStatus.innerHTML = `
+                    <div class="verification-icon success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>${title}</h3>
+                    <div class="verification-message">
+                        ${message}
+                    </div>
+                `;
+                
+                verificationActions.innerHTML = `
+                    <a href="login.html" class="verification-btn">Go to Login</a>
+                `;
+                verificationActions.style.display = 'block';
+            }
+            
+            // 显示错误状态
+            function showError(title, message) {
+                verificationStatus.innerHTML = `
+                    <div class="verification-icon error-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <h3>${title}</h3>
+                    <div class="verification-message">
+                        ${message}
+                    </div>
+                `;
+                
+                verificationActions.innerHTML = `
+                    <a href="#" id="resendVerificationBtn" class="resend-link">Resend verification email</a><br><br>
+                    <a href="login.html" class="verification-btn">Return to Login Page</a>
+                `;
+                verificationActions.style.display = 'block';
+                
+                // 添加重新发送验证邮件的事件监听
+                setTimeout(() => {
+                    document.getElementById('resendVerificationBtn').addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // 如果URL中有email参数，则使用它；否则提示用户输入
+                        let userEmail = email;
+                        if (!userEmail) {
+                            userEmail = prompt('Please enter your email address:');
+                            if (!userEmail) return;
+                        }
+                        
+                        // 显示发送中状态
+                        this.textContent = 'Sending...';
+                        this.style.pointerEvents = 'none';
+                        
+                        // 发送请求
+                        fetch(`${window.config.apiBaseUrl}/api/auth/resend-verification?email=${encodeURIComponent(userEmail)}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Verification email has been resent. Please check your inbox.');
+                                this.textContent = 'Email Sent';
+                            } else {
+                                alert(data.message || 'Failed to resend verification email. Please try again later.');
+                                this.textContent = 'Resend verification email';
+                                this.style.pointerEvents = 'auto';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error resending verification email:', error);
+                            alert('Error sending verification email. Please try again later.');
+                            this.textContent = 'Resend verification email';
+                            this.style.pointerEvents = 'auto';
+                        });
+                    });
+                }, 0);
+            }
+            
+            // 显示过期状态
+            function showExpired(title, message) {
+                showError(title, message); // 重用错误显示逻辑，因为处理方式基本相同
+            }
+            
+            // 显示加载状态
+            function showLoading(message) {
+                verificationStatus.innerHTML = `
+                    <div class="verification-icon loading-icon">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="verification-message">
+                        ${message}
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 

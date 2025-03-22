@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart PPT Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Login form specific styles */
+        .login-section {
+            padding: 80px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 300px);
+        }
+        
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e4e4e4;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .login-form .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .login-form .submit-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            color: #e4e4e4;
+        }
+        
+        .divider:before, .divider:after {
+            content: "";
+            flex-grow: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
+        .social-login {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            background-color: white;
+            border-radius: 6px;
+            color: #333;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .google-btn:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .google-btn i {
+            margin-right: 10px;
+            color: #DB4437;
+        }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #e4e4e4;
+        }
+        
+        .signup-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .forgot-password a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        window.config = {
+            apiBaseUrl: 'http://localhost:8080',
+            googleAuthUrl: 'http://localhost:8080/oauth2/authorization/google'
+        };
+    </script>
+</head>
+<body>
+    <div class="particles-container" id="particles-js"></div>
+    
+    <header>
+        <nav>
+            <div class="logo">
+                <span>AI</span>Slides
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#templates">Templates</a></li>
+                <li><a href="index.html#pricing">Pricing</a></li>
+                <li><a href="index.html#contact">Contact Us</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="login-btn active">Log in</button>
+                <button onclick="window.location.href='register.html'" class="signup-btn">Sign up</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="login-section">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>Welcome Back</h2>
+                    <p>Log in to your account to continue using our services</p>
+                </div>
+                
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <div class="forgot-password">
+                            <a href="#" id="forgotPassword">Forgot password?</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Error message display area -->
+                    <div id="error-container" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px; background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); color: #ff6b6b;">
+                        <p id="error-message"></p>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Log in</button>
+                </form>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <div class="social-login">
+                    <button onclick="window.location.href=window.config.googleAuthUrl" class="google-btn">
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+                
+                <div class="signup-link">
+                    Don't have an account? <a href="register.html">Sign up now</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span>AI</span>Slides
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Templates</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 AISlides. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Particles effect configuration
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#ffffff" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: false },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#ffffff",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: false,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 1 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+            
+            // Login form handling
+            const loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // Simple form validation
+                if (!email || !password) {
+                    console.log('Form validation failed: Please fill in all required fields');
+                    showError('Please fill in all required fields');
+                    return;
+                }
+                
+                // Loading state
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.textContent = 'Logging in...';
+                submitBtn.disabled = true;
+                
+                // Prepare request data
+                const requestData = {
+                    email: email,
+                    password: password
+                };
+                
+                // Send login request
+                fetch(`${window.config.apiBaseUrl}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData),
+                    credentials: 'include'
+                })
+                .then(response => {
+                    // 无论是成功还是失败，都尝试解析为JSON
+                    return response.json().then(data => {
+                        if (!response.ok) {
+                            // 请求失败，但我们已经有了响应数据
+                            data.status = response.status;
+                            throw data;
+                        }
+                        return data;
+                    });
+                })
+                .then(data => {
+                    if (data.success) {
+                        // 先存储登录状态到localStorage
+                        localStorage.setItem('userLoggedIn', 'true');
+                        localStorage.setItem('loginTime', new Date().getTime());
+                        
+                        // 添加时间戳参数，确保页面完全重新加载
+                        window.location.href = 'index.html?refresh=' + new Date().getTime();
+                    } else {
+                        // Display error message
+                        showError(data.message || 'Login failed, please check your network connection and try again');
+                        
+                        // Reset button
+                        submitBtn.textContent = 'Log in';
+                        submitBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('==================== Request Error ====================');
+                    console.error('Error Details:', error);
+                    console.error('=====================================================');
+                    
+                    // 检查是否是我们从response.json()抛出的错误对象
+                    if (error && error.message) {
+                        showError(error.message);
+                        
+                        // 如果是邮箱验证错误，保存用户邮箱以便后续重发验证邮件
+                        if (error.errorType === 'EMAIL_NOT_VERIFIED' && error.needsVerification) {
+                            const verificationEmail = error.email || email;
+                            localStorage.setItem('pendingVerificationEmail', verificationEmail);
+                        }
+                    } else {
+                        // 其他类型的错误
+                        showError('Login failed, please check your network connection and try again');
+                    }
+                    
+                    // Reset button
+                    submitBtn.textContent = 'Log in';
+                    submitBtn.disabled = false;
+                });
+            });
+            
+            // Forgot password click event
+            document.getElementById('forgotPassword').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Forgot password feature coming soon!');
+            });
+            
+            // Display error message
+            function showError(message) {
+                const errorContainer = document.getElementById('error-container');
+                const errorMessage = document.getElementById('error-message');
+                
+                errorContainer.style.display = 'block';
+                errorMessage.textContent = message;
+                
+                // 检查是否需要添加"重新发送验证邮件"链接
+                if (message.toLowerCase().includes('验证') || 
+                    message.toLowerCase().includes('verify') || 
+                    message.toLowerCase().includes('verification') || 
+                    message.toLowerCase().includes('email') && message.toLowerCase().includes('confirm')) {
+                    
+                    // 在错误消息下方添加"重新发送验证邮件"链接
+                    if (!document.getElementById('resend-verification-link')) {
+                        const resendLink = document.createElement('p');
+                        resendLink.style.marginTop = '10px';
+                        resendLink.innerHTML = '<a href="#" id="resend-verification-link" style="color: #3498db; text-decoration: underline;">Resend verification email</a>';
+                        errorMessage.parentNode.appendChild(resendLink);
+                        
+                        // 添加重发验证邮件的事件监听
+                        document.getElementById('resend-verification-link').addEventListener('click', function(e) {
+                            e.preventDefault();
+                            
+                            // 优先使用存储的验证邮箱，否则使用输入框中的邮箱
+                            const storedEmail = localStorage.getItem('pendingVerificationEmail');
+                            const email = storedEmail || document.getElementById('email').value;
+                            
+                            if (!email) {
+                                alert('Please enter your email address first');
+                                return;
+                            }
+                            
+                            // 显示加载状态
+                            const resendLink = this;
+                            resendLink.textContent = 'Sending...';
+                            resendLink.style.pointerEvents = 'none';
+                            
+                            // 发送请求
+                            fetch(`${window.config.apiBaseUrl}/api/auth/resend-verification?email=${encodeURIComponent(email)}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // 更新错误消息为成功信息
+                                    errorContainer.style.backgroundColor = 'rgba(46, 204, 113, 0.1)';
+                                    errorContainer.style.borderColor = 'rgba(46, 204, 113, 0.3)';
+                                    errorMessage.textContent = 'Verification email has been sent. Please check your inbox.';
+                                    
+                                    // 移除存储的邮箱
+                                    localStorage.removeItem('pendingVerificationEmail');
+                                    
+                                    // 移除重发链接
+                                    resendLink.parentNode.remove();
+                                } else {
+                                    // 恢复链接状态
+                                    resendLink.textContent = 'Resend verification email';
+                                    resendLink.style.pointerEvents = 'auto';
+                                    
+                                    // 显示失败消息
+                                    alert(data.message || 'Failed to resend verification email. Please try again later.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error resending verification email:', error);
+                                
+                                // 恢复链接状态
+                                resendLink.textContent = 'Resend verification email';
+                                resendLink.style.pointerEvents = 'auto';
+                                
+                                // 显示错误消息
+                                alert('An error occurred while trying to resend the verification email. Please try again later.');
+                            });
+                        });
+                    }
+                }
+                
+                // 不自动隐藏错误信息，保持显示直到用户修改表单
+                // setTimeout(function() {
+                //     errorContainer.style.display = 'none';
+                // }, 5000);
+            }
+            
+            // Check if already logged in
+            fetch(`${window.config.apiBaseUrl}/user`, {
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Login status check failed: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(user => {
+                if (user && user.id) {
+                    // Already logged in, redirect to homepage
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch(error => {
+                console.log('User not logged in or error checking login status:', error);
+                // User not logged in, continue showing login page
+            });
+        });
+
+        // 专门用于解决邮箱登录状态不显示的问题
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否刚刚登录过
+            const justLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const loginTime = localStorage.getItem('loginTime');
+            const currentTime = new Date().getTime();
+            
+            // 如果是刚登录的（5分钟内），而且界面上没有显示用户信息
+            if (justLoggedIn && loginTime && (currentTime - loginTime < 300000)) {
+                console.log('检测到最近登录，正在重新获取用户信息...');
+                
+                // 尝试再次获取用户信息
+                fetch(`${window.config.apiBaseUrl}/user`, {
+                    credentials: 'include',
+                    // 添加缓存控制头
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                })
+                .then(response => {
+                    console.log('用户信息API响应:', response.status);
+                    if (!response.ok) throw new Error('获取用户信息失败');
+                    return response.json();
+                })
+                .then(user => {
+                    console.log('获取到用户信息:', user);
+                    if (user && user.id) {
+                        // 清除登录标记
+                        localStorage.removeItem('userLoggedIn');
+                        localStorage.removeItem('loginTime');
+                        
+                        // 更新界面显示
+                        document.querySelector('.auth-buttons').innerHTML = `
+                            <div class="user-container" style="display:flex;align-items:center;gap:10px">
+                                <img class="user-avatar" src="${user.picture || 'images/default-avatar.png'}" alt="头像" 
+                                     style="width:36px;height:36px;border-radius:50%">
+                                <div class="user-details" style="display:flex;flex-direction:column">
+                                    <span class="user-name" style="font-weight:600;color:#fff">${user.name || '用户'}</span>
+                                    <span class="user-email" style="font-size:12px;color:rgba(255,255,255,0.7)">${user.email || ''}</span>
+                                </div>
+                                <button onclick="logout()" class="login-btn">退出</button>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(err => {
+                    console.error('重新获取用户信息失败:', err);
+                    // 清除登录标记，避免无限循环
+                    localStorage.removeItem('userLoggedIn');
+                    localStorage.removeItem('loginTime');
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

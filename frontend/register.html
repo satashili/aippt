@@ -194,7 +194,7 @@
                     
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Create a password (min. 6 characters)" required>
+                        <input type="password" id="password" name="password" placeholder="Create a password (min. 8 characters)" required>
                     </div>
                     
                     <div class="form-group">
@@ -233,7 +233,7 @@
                 </div>
                 
                 <div class="login-link">
-                    Already have an account? <a href="#" onclick="window.location.href=window.config.googleAuthUrl">Log in</a>
+                    Already have an account? <a href="login.html">Log in</a>
                 </div>
             </div>
         </section>
@@ -347,28 +347,28 @@
                 const confirmPassword = document.getElementById('confirmPassword').value;
                 
                 // 打印表单数据
-                console.log('==================== Form Data ====================');
-                console.log('Name:', name);
-                console.log('Email:', email);
-                console.log('Password Length:', password.length);
-                console.log('Confirm Password Length:', confirmPassword.length);
+                console.log('==================== 表单数据 ====================');
+                console.log('用户名:', name);
+                console.log('邮箱:', email);
+                console.log('密码长度:', password.length);
+                console.log('确认密码长度:', confirmPassword.length);
                 console.log('=====================================================');
                 
                 // Simple form validation
                 if (!name || !email || !password || !confirmPassword) {
-                    console.log('Form validation failed: Please fill in all required fields');
+                    console.log('表单验证失败: 请填写所有必填字段');
                     alert('Please fill in all required fields');
                     return;
                 }
                 
                 if (password !== confirmPassword) {
-                    console.log('Form validation failed: Passwords do not match');
+                    console.log('表单验证失败: 密码不匹配');
                     alert('Passwords do not match');
                     return;
                 }
                 
                 if (password.length < 6) {
-                    console.log('Form validation failed: Password too short');
+                    console.log('表单验证失败: 密码长度不足');
                     alert('Password must be at least 6 characters long');
                     return;
                 }
@@ -384,9 +384,9 @@
                     email: email,
                     password: password
                 };
-                console.log('==================== Sending Request Data ====================');
-                console.log('Request URL:', `${window.config.apiBaseUrl}/api/auth/register`);
-                console.log('Request Data:', JSON.stringify(requestData, null, 2));
+                console.log('==================== 发送请求数据 ====================');
+                console.log('请求URL:', `${window.config.apiBaseUrl}/api/auth/register`);
+                console.log('请求数据:', JSON.stringify(requestData, null, 2));
                 console.log('=====================================================');
                 
                 // Send registration request
@@ -398,18 +398,60 @@
                     body: JSON.stringify(requestData)
                 })
                 .then(response => {
-                    console.log('==================== Response Received ====================');
-                    console.log('Response Status:', response.status);
+                    console.log('==================== 收到响应 ====================');
+                    console.log('响应状态:', response.status);
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Response Data:', JSON.stringify(data, null, 2));
+                    console.log('响应数据:', JSON.stringify(data, null, 2));
                     console.log('=====================================================');
                     
                     if (data.success) {
-                        console.log('Registration successful, redirecting to login page');
-                        alert('Registration successful! Redirecting to login page...');
-                        window.location.href = window.config.googleAuthUrl;
+                        console.log('注册成功，提示用户检查邮箱');
+                        
+                        // 隐藏注册表单，显示成功信息
+                        const registerContainer = document.querySelector('.register-container');
+                        registerContainer.innerHTML = `
+                            <div style="text-align: center;">
+                                <div style="font-size: 64px; color: #2ecc71; margin-bottom: 20px;">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <h2>Registration Successful!</h2>
+                                <p style="margin-bottom: 20px;">Thank you for registering! We've sent a verification email to <strong>${email}</strong>.</p>
+                                <p style="margin-bottom: 30px;">Please check your inbox and click on the verification link to activate your account.</p>
+                                <p style="margin-bottom: 20px; font-size: 14px; color: #aaa;">
+                                    Didn't receive the email? Check your spam folder or 
+                                    <a href="#" id="resendVerificationBtn" style="color: #3498db; text-decoration: none;">click here to resend</a>.
+                                </p>
+                                <div>
+                                    <a href="login.html" style="background: transparent; color: #3498db; border: 1px solid #3498db; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block;">Go to Login Page</a>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // 添加重发验证邮件的事件监听
+                        document.getElementById('resendVerificationBtn').addEventListener('click', function(e) {
+                            e.preventDefault();
+                            
+                            fetch(`${window.config.apiBaseUrl}/api/auth/resend-verification?email=${encodeURIComponent(email)}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Verification email has been resent. Please check your inbox.');
+                                } else {
+                                    alert(data.message || 'Failed to resend verification email. Please try again later.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error resending verification email:', error);
+                                alert('An error occurred while trying to resend the verification email. Please try again later.');
+                            });
+                        });
                     } else {
                         // 重置按钮
                         submitBtn.textContent = 'Create Account';
@@ -425,11 +467,11 @@
                         
                         if (data.errors) {
                             // 处理字段验证错误
-                            console.log('==================== Validation Errors ====================');
-                            errorMessage.textContent = 'Registration failed, please check the following errors:';
+                            console.log('==================== 验证错误 ====================');
+                            errorMessage.textContent = '注册失败，请检查以下错误：';
                             
                             for (const field in data.errors) {
-                                console.log(`Field ${field} error:`, data.errors[field]);
+                                console.log(`字段 ${field} 错误:`, data.errors[field]);
                                 // 添加到错误详情列表
                                 const errorItem = document.createElement('li');
                                 errorItem.textContent = `${getFieldDisplayName(field)}: ${data.errors[field]}`;
@@ -438,13 +480,13 @@
                             console.log('=====================================================');
                         } else {
                             // 处理一般错误
-                            console.log('Registration failed:', data.message || 'Unknown error');
-                            errorMessage.textContent = `Registration failed: ${data.message || 'Unknown error'}`;
+                            console.log('注册失败:', data.message || '未知错误');
+                            errorMessage.textContent = `注册失败: ${data.message || '未知错误'}`;
                             
                             // 显示错误类型
                             if (data.errorType) {
                                 const errorTypeItem = document.createElement('li');
-                                errorTypeItem.textContent = `Error type: ${getErrorTypeDisplayName(data.errorType)}`;
+                                errorTypeItem.textContent = `错误类型: ${getErrorTypeDisplayName(data.errorType)}`;
                                 errorDetails.appendChild(errorTypeItem);
                             }
                             
@@ -460,8 +502,8 @@
                     }
                 })
                 .catch(error => {
-                    console.error('==================== Request Error ====================');
-                    console.error('Error Details:', error);
+                    console.error('==================== 请求错误 ====================');
+                    console.error('错误详情:', error);
                     console.error('=====================================================');
                     
                     // 重置按钮
@@ -472,17 +514,17 @@
                     const errorContainer = document.getElementById('error-container');
                     const errorMessage = document.getElementById('error-message');
                     errorContainer.style.display = 'block';
-                    errorMessage.textContent = 'Failed to connect to server. Please check your network connection or try again later.';
+                    errorMessage.textContent = '连接服务器失败，请检查网络连接或稍后再试。';
                 });
             });
             
             // 辅助函数：将字段名转换为显示名称
             function getFieldDisplayName(field) {
                 const fieldNames = {
-                    'name': 'Name',
-                    'email': 'Email',
-                    'password': 'Password',
-                    'confirmPassword': 'Confirm Password'
+                    'name': '用户名',
+                    'email': '邮箱',
+                    'password': '密码',
+                    'confirmPassword': '确认密码'
                 };
                 return fieldNames[field] || field;
             }
@@ -490,9 +532,9 @@
             // 辅助函数：将错误类型转换为显示名称
             function getErrorTypeDisplayName(errorType) {
                 const errorTypes = {
-                    'USER_EXISTS': 'User already exists',
-                    'INVALID_INPUT': 'Invalid input',
-                    'INTERNAL_ERROR': 'Internal error'
+                    'USER_EXISTS': '用户已存在',
+                    'INVALID_INPUT': '输入无效',
+                    'INTERNAL_ERROR': '内部错误'
                 };
                 return errorTypes[errorType] || errorType;
             }
