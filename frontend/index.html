@@ -12,6 +12,7 @@
             googleAuthUrl: 'http://localhost:8080/oauth2/authorization/google'
         };
     </script>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
     <div class="particles-container" id="particles-js"></div>
@@ -202,7 +203,7 @@
                                 <li><i class="fas fa-check"></i> Watermark-free Export</li>
                             </ul>
                         </div>
-                        <button class="pricing-btn">Subscribe Now</button>
+                        <button class="pricing-btn" onclick="initiatePayment('monthly', 1000)">Subscribe Now</button>
                         <p class="pricing-note">Cancel anytime</p>
                     </div>
                     
@@ -227,7 +228,7 @@
                                 <li><i class="fas fa-check"></i> Team Collaboration Features</li>
                             </ul>
                         </div>
-                        <button class="pricing-btn">Subscribe Now</button>
+                        <button class="pricing-btn" onclick="initiatePayment('annual', 6000)">Subscribe Now</button>
                         <p class="pricing-note">14-day money-back guarantee</p>
                     </div>
                 </div>
@@ -322,5 +323,6 @@
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
+    <script src="payment.js"></script>
 </body>
 </html> 
