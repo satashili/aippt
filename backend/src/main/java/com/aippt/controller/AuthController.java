@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class AuthController {
@@ -23,9 +24,10 @@ public class AuthController {
     private UserService userService;
 
     @GetMapping("/user")
-    public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
+    public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal, HttpServletRequest request) {
         Map<String, Object> userInfo = new HashMap<>();
         
+        // 尝试获取OAuth2用户信息（Google登录）
         if (principal != null) {
             logger.info("==================== Google登录用户信息 ====================");
             logger.info("原始认证信息: {}", principal.getAttributes());
@@ -51,15 +53,53 @@ public class AuthController {
                 userInfo.put("memberExpireTime", user.getMemberExpireTime());
                 
                 logger.info("用户信息已成功处理并返回");
+                return userInfo;
             } catch (Exception e) {
                 logger.error("处理Google登录失败", e);
                 userInfo.put("error", "处理登录失败: " + e.getMessage());
+                return userInfo;
             }
-        } else {
-            logger.warn("未找到已认证的用户信息");
-            userInfo.put("error", "未找到认证信息");
         }
-
+        
+        // 尝试获取普通登录的会话信息
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            String userId = (String) session.getAttribute("userId");
+            if (userId != null) {
+                logger.info("==================== 普通登录用户信息 ====================");
+                logger.info("Session ID: {}", session.getId());
+                logger.info("用户ID: {}", userId);
+                
+                try {
+                    // 通过userId获取用户信息
+                    Optional<User> userOpt = userService.findById(userId);
+                    if (userOpt.isPresent()) {
+                        User user = userOpt.get();
+                        logger.info("成功获取到用户: {}", user.getEmail());
+                        logger.info("======================================================");
+                        
+                        // 返回用户信息
+                        userInfo.put("id", user.getId());
+                        userInfo.put("name", user.getName());
+                        userInfo.put("email", user.getEmail());
+                        userInfo.put("picture", user.getPicture());
+                        userInfo.put("authProvider", user.getAuthProvider());
+                        userInfo.put("isMember", user.getIsMember());
+                        userInfo.put("memberExpireTime", user.getMemberExpireTime());
+                        
+                        return userInfo;
+                    }
+                } catch (Exception e) {
+                    logger.error("获取普通登录用户信息失败", e);
+                    userInfo.put("error", "获取用户信息失败: " + e.getMessage());
+                    return userInfo;
+                }
+            }
+        }
+        
+        // 未找到任何认证信息
+        logger.warn("未找到已认证的用户信息");
+        userInfo.put("error", "未找到认证信息");
         return userInfo;
     }
 

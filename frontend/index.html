@@ -324,5 +324,101 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
     <script src="payment.js"></script>
+    
+    <script>
+    // 检查用户登录状态
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('正在检查用户登录状态...');
+        
+        fetch(`${window.config.apiBaseUrl}/user`, {
+            credentials: 'include',  // 发送 Cookie
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache', 
+                'Expires': '0'
+            }
+        })
+        .then(response => {
+            console.log('登录状态响应码:', response.status);
+            if (!response.ok) {
+                throw new Error(`登录状态检查失败: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(user => {
+            console.log('获取到用户信息:', user);
+            if (user && user.id) {
+                // 用户已登录，更新 UI
+                console.log('用户已登录，更新UI显示');
+                
+                // 设置默认头像逻辑
+                let avatarUrl = user.picture;
+                
+                // 如果头像为空或无效，根据登录类型提供默认头像
+                if (!avatarUrl || avatarUrl.trim() === '') {
+                    if (user.authProvider === 'google') {
+                        // Google登录使用Google风格的默认头像
+                        avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email.charAt(0))}&background=4285F4&color=fff&bold=true&size=200`;
+                    } else {
+                        // 邮箱登录使用基于用户名/邮箱的文字头像
+                        const email = user.email || '';
+                        const firstLetter = email.charAt(0).toUpperCase();
+                        // 生成随机颜色但保持一致性 (基于邮箱散列)
+                        const hash = email.split('').reduce((a, b) => {
+                            a = ((a << 5) - a) + b.charCodeAt(0);
+                            return a & a;
+                        }, 0);
+                        const hue = Math.abs(hash) % 360;
+                        avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(firstLetter)}&background=hsl(${hue},70%,50%)&color=fff&bold=true&size=200`;
+                    }
+                }
+                
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <div class="user-container" style="display:flex;align-items:center;gap:10px">
+                        <img class="user-avatar" src="${avatarUrl}" alt="头像" 
+                             style="width:36px;height:36px;border-radius:50%"
+                             onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'U')}&size=200&color=fff&background=3498db';">
+                        <div class="user-details" style="display:flex;flex-direction:column">
+                            <span class="user-name" style="font-weight:600;color:#fff">${user.name || '用户'}</span>
+                            <span class="user-email" style="font-size:12px;color:rgba(255,255,255,0.7)">${user.email || ''}</span>
+                        </div>
+                        <button onclick="logout()" class="login-btn">退出</button>
+                    </div>
+                `;
+            } else {
+                // 用户未登录，显示登录按钮
+                console.log('用户未登录，显示登录按钮');
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <button onclick="window.location.href='login.html'" class="login-btn">Log in</button>
+                    <button onclick="window.location.href='register.html'" class="signup-btn">Sign up</button>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('登录状态检查失败:', error);
+            // 用户未登录，显示登录按钮
+            document.querySelector('.auth-buttons').innerHTML = `
+                <button onclick="window.location.href='login.html'" class="login-btn">Log in</button>
+                <button onclick="window.location.href='register.html'" class="signup-btn">Sign up</button>
+            `;
+        });
+        
+        // 添加全局退出函数
+        window.logout = function() {
+            fetch(`${window.config.apiBaseUrl}/logout`, {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                console.log('登出响应状态:', response.status);
+                window.location.href = 'index.html?t=' + new Date().getTime();
+            })
+            .catch(error => {
+                console.error('登出请求失败:', error);
+                window.location.href = 'index.html?t=' + new Date().getTime();
+            });
+        };
+    });
+    </script>
 </body>
 </html> 

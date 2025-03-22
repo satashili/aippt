@@ -58,7 +58,7 @@ public class SecurityConfig {
                 logger.info("Configuring authorization rules");
                 authorize
                     // 允许这些路径无需认证即可访问
-                    .requestMatchers("/", "/error", "/webjars/**", "/login/**", "/api/auth/register", "/api/auth/login", "/api/auth/verify-email", "/api/auth/resend-verification", "/api/test/**").permitAll()
+                    .requestMatchers("/", "/error", "/webjars/**", "/login/**", "/api/auth/register", "/api/auth/login", "/api/auth/verify-email", "/api/auth/resend-verification", "/api/test/**", "/user").permitAll()
                     // 其他所有请求都需要认证
                     .anyRequest().authenticated();
             })
@@ -134,8 +134,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         // 创建CORS配置对象
         CorsConfiguration configuration = new CorsConfiguration();
-        // 设置允许的源（域名），这里允许前端地址http://localhost:3000访问
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        // 设置允许的源（域名），这里允许前端地址访问
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
         // 设置允许的HTTP方法
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // 设置允许的请求头，*表示允许所有头
